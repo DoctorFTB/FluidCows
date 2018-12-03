@@ -1,0 +1,58 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url = "http://files.minecraftforge.net/maven" }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+version = "1.1.0"
+group = "ftblag.fluidcows"
+archivesBaseName = "FluidCows"
+
+sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+minecraft {
+    version = "1.12.2-14.23.5.2768"
+    runDir = "run"
+    replaceIn "FluidCows.java"
+    replace "@VERSION@", project.version
+    mappings = "stable_39"
+}
+
+repositories {
+    maven { url "http://maven.shadowfacts.net" }
+    maven { url "https://maven.mcmoddev.com" }
+    maven { url "http://dvs1.progwml6.com/files/maven" }
+    maven { url "http://maven.covers1624.net/" }
+    maven { url "http://maven.blamejared.com/" }
+	maven { url "http://maven.tterrag.com" }
+	maven { url "http://tehnut.info/maven" }
+	maven { url "modmaven.k-4u.nl" }
+}
+
+dependencies {
+	deobfProvided "mezz.jei:jei_1.12.2:4.13.1.220:api"
+	runtime "mezz.jei:jei_1.12.2:4.13.1.220"
+    deobfCompile "mcp.mobius.waila:Hwyla:1.8.26-B41_1.12.2:api"
+    runtime "mcp.mobius.waila:Hwyla:1.8.26-B41_1.12.2"
+	deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.14-7"
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}

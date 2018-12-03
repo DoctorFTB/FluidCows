@@ -1,0 +1,13 @@
+{
+	"forge_marker": 1,
+    "variants": {
+        "cow=false,facing=east":  { "model": "fluidcows:model_open", "y": 90 },
+        "cow=false,facing=west":  { "model": "fluidcows:model_open", "y": 270 },
+        "cow=false,facing=south": { "model": "fluidcows:model_open", "y": 180 },
+        "cow=false,facing=north": { "model": "fluidcows:model_open" },
+        "cow=true,facing=east":   { "model": "fluidcows:model_closed", "y": 90 },
+        "cow=true,facing=west":   { "model": "fluidcows:model_closed", "y": 270 },
+        "cow=true,facing=south":  { "model": "fluidcows:model_closed", "y": 180 },
+        "cow=true,facing=north":  { "model": "fluidcows:model_closed" }
+    }
+}

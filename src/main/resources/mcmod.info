@@ -1,0 +1,16 @@
+[
+{
+  "modid": "fluidcows",
+  "name": "Fluid Cows",
+  "description": "Cows with fluid!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["FTB_lag"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
