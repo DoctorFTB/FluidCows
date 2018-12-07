@@ -71,7 +71,7 @@ public class FCConfig {
                 sumWeight += rate;
             }
         }
-        for (Fluid fluid : FLUIDS /*FCUtils.getBucketFluids()*/) {
+        for (Fluid fluid : FCUtils.getBucketFluids()) {
             String fName = fluid.getName();
             String parent1 = parser.getOrDefString(fName, PARENT_1, "");
             String parent2 = parser.getOrDefString(fName, PARENT_2, "");
@@ -84,14 +84,14 @@ public class FCConfig {
                     breed.put(pair, list);
 
                     canBreed.add(fluid);
-                    FluidCows.log.info("Breeding: Add new! First parent -> \"" + parent1 + "\"; Second parent -> \"" + parent2 + "\"; result -> \"" + fName + "\"");
+                    FluidCows.info("Breeding: Add new! First parent -> \"" + parent1 + "\"; Second parent -> \"" + parent2 + "\"; result -> \"" + fName + "\"");
                 } else {
-                    FluidCows.log.warn("Breeding: Failed to add! First parent -> \"" + parent1 + "\"; Second parent -> \"" + parent2 + "\"; result -> \"" + fName + "\"");
+                    FluidCows.warn("Breeding: Failed to add! First parent -> \"" + parent1 + "\"; Second parent -> \"" + parent2 + "\"; result -> \"" + fName + "\"");
                 }
             }
         }
 
-        FluidCows.log.info("Added " + breed.size() + " breeding variants!");
+        FluidCows.info("Added " + breed.size() + " breeding variants!");
 
         parser.save();
         loaded = true;

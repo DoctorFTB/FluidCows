@@ -46,7 +46,7 @@ public class FluidCows {
 
     public static final String MODID = "fluidcows", NAME = "Fluid Cows", VERSION = "@VERSION@";
 
-    public static Logger log;
+    private static Logger log;
     public static StallBlock stall;
     public static ItemCowHalter halter;
     public static ItemCowDisplayer displayer;
@@ -98,6 +98,14 @@ public class FluidCows {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         FCConfig.load();
-        log.info("This is info! Support " + FCUtils.getBucketFluids().size() + " fluids. Can spawn " + FCConfig.FLUIDS.size() + " cows.");
+        info("This is info! Support " + FCUtils.getBucketFluids().size() + " fluids. Can spawn " + FCConfig.FLUIDS.size() + " cows.");
+    }
+
+    public static void info(String msg) {
+        log.info("[FluidCows] " + msg);
+    }
+
+    public static void warn(String msg) {
+        log.warn("[FluidCows] " + msg);
     }
 }

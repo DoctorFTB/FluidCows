@@ -41,7 +41,7 @@ public class ItemCowHalter extends BaseItem {
             return false;
         ItemStack halter = new ItemStack(this);
         NBTTagCompound tag = new NBTTagCompound();
-        entity.writeEntityToNBT(tag);
+        ((EntityFluidCow) entity).writeEntityToHalter(tag);
         halter.setTagCompound(tag);
         if (!player.inventory.addItemStackToInventory(halter)) {
             player.dropItem(halter, false);

@@ -114,7 +114,7 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
 
     @Override
     public boolean isUsableByPlayer(EntityPlayer player) {
-        return true;
+        return world.getTileEntity(getPos()) == this && player.getDistanceSq(getPos().getX() + .5D, getPos().getY() + .5D, getPos().getZ() + .5D) <= 64.0D;
     }
 
     @Override

@@ -56,7 +56,7 @@ public class ItemCowDisplayer extends BaseItem {
         } else if (icon != Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite() && icon.getFrameTextureData(0) != null) {
             rgb = FCUtils.getColor(icon.getFrameTextureData(0)).getRGB();
         }
-        tag.setInteger("color", rgb);
+        tag.setLong("color", rgb);
     }
 
     @SideOnly(Side.CLIENT)

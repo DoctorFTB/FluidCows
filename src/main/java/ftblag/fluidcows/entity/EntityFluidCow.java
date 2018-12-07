@@ -35,7 +35,8 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
 
     public EntityFluidCow(World worldIn) {
         super(worldIn);
-        updateCD(FCConfig.getWorldCD(fluid.getName()));
+        if (fluid != null)
+            updateCD(FCConfig.getWorldCD(fluid.getName()));
     }
 
     public EntityFluidCow(World world, Fluid fluid) {
@@ -130,6 +131,15 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
         super.writeEntityToNBT(compound);
         compound.setString(TYPE_FLUID, FluidRegistry.getFluidName(fluid));
         compound.setInteger(TYPE_CD, getCD());
+    }
+
+    public void writeEntityToHalter(NBTTagCompound compound) {
+        compound.setString(TYPE_FLUID, FluidRegistry.getFluidName(fluid));
+        compound.setInteger(TYPE_CD, getCD());
+        compound.setInteger("InLove", this.inLove);
+        compound.setInteger("Age", this.getGrowingAge());
+        compound.setInteger("ForcedAge", this.forcedAge);
+        compound.setFloat("Health", this.getHealth());
     }
 
     @Override
