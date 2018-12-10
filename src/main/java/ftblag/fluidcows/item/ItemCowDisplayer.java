@@ -37,31 +37,9 @@ public class ItemCowDisplayer extends BaseItem {
 
     public static ItemStack applyFluidToItemStack(ItemStack stack, Fluid fluid) {
         NBTTagCompound tag = stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound();
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient())
-            addColor(tag, fluid);
-//        tag.setInteger("color", fluid.getColor());
         tag.setString("fluid", fluid.getName());
         stack.setTagCompound(tag);
         return stack;
-    }
-
-    @SideOnly(Side.CLIENT)
-    private static void addColor(NBTTagCompound tag, Fluid fluid) {
-        TextureAtlasSprite icon = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluid.getStill().toString());
-        int color = fluid.getColor();
-
-        int rgb = 0xFFFFFFFF;
-        if (color != rgb) {
-            rgb = new Color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, 128).getRGB();
-        } else if (icon != Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite() && icon.getFrameTextureData(0) != null) {
-            rgb = FCUtils.getColor(icon.getFrameTextureData(0)).getRGB();
-        }
-        tag.setLong("color", rgb);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static int getColorMultiplier(ItemStack stack) {
-        return stack.hasTagCompound() ? stack.getTagCompound().getInteger("color") : 0;
     }
 
     public static Entity spawnCreature(World worldIn, Fluid fluid, double x, double y, double z) {
