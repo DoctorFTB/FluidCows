@@ -79,6 +79,7 @@ public class ItemCowDisplayer extends BaseItem {
                 tooltip.add("World cooldown: " + FCConfig.getWorldCD(fName));
                 tooltip.add("Stall cooldown: " + FCConfig.getStallCD(fName));
                 tooltip.add(TextFormatting.RED + "Spawn: " + desc);
+                tooltip.add("Right click to spawn cow");
             }
         }
     }

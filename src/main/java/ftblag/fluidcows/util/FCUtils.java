@@ -83,11 +83,11 @@ public class FCUtils {
         return new Color(red / len, green / len, blue / len, 128);
     }
 
-    public static String toTime(int secondstoAdd) {
+    public static String toTime(int secondstoAdd, String zero) {
         int newSofd = ((int) (secondstoAdd % SECONDS_PER_DAY) + SECONDS_PER_DAY) % SECONDS_PER_DAY;
         int newMinute = (newSofd / SECONDS_PER_MINUTE) % MINUTES_PER_HOUR;
         int newSecond = newSofd % SECONDS_PER_MINUTE;
-        return newMinute == 0 && newSecond == 0 ? "Now" : String.format("%02d:%02d", newMinute, newSecond);
+        return newMinute != 0 || newSecond != 0 ? String.format("%02d:%02d", newMinute, newSecond) : zero;
     }
 
     public static ResourceLocation gLoc(String s) {

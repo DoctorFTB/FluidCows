@@ -9,15 +9,19 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -127,9 +131,32 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
     }
 
     @Override
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if (getCD() == 0 && fluid != null && fluid.canBePlacedInWorld()) {
+            if (source instanceof EntityDamageSource) {
+                EntityDamageSource sour = (EntityDamageSource) source;
+                if (sour.damageType.equals("player")) {
+                    EntityPlayer pl = (EntityPlayer) sour.getTrueSource();
+                    if (!(pl instanceof FakePlayer)) {
+                        ItemStack hand = pl.getHeldItemMainhand();
+                        if (!hand.isEmpty() && hand.getItem() == Items.STICK) {
+                            if (getEntityWorld().isAirBlock(getPosition()) && !getEntityWorld().isRemote) {
+                                getEntityWorld().setBlockState(getPosition(), fluid.getBlock().getDefaultState());
+                            }
+                            updateCD(FCConfig.getWorldCD(fluid.getName()));
+                        }
+                    }
+                }
+            }
+        }
+        return super.attackEntityFrom(source, amount);
+    }
+
+    @Override
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
-        compound.setString(TYPE_FLUID, FluidRegistry.getFluidName(fluid));
+        if (fluid != null)
+            compound.setString(TYPE_FLUID, FluidRegistry.getFluidName(fluid));
         compound.setInteger(TYPE_CD, getCD());
     }
 
@@ -146,23 +173,24 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
         fluid = FluidRegistry.getFluid(compound.getString(TYPE_FLUID));
-        if (fluid == null) {
-            fluid = FCUtils.getRandFluid();
-        }
-        if (!FCConfig.isEnable(fluid.getName()))
+        if (fluid == null || !FCConfig.isEnable(fluid.getName()))
             fluid = FCUtils.getRandFluid();
         updateCD(compound.getInteger(TYPE_CD));
     }
 
     @Override
     public void writeSpawnData(ByteBuf buffer) {
-        ByteBufUtils.writeUTF8String(buffer, FluidRegistry.getFluidName(fluid));
+        buffer.writeBoolean(fluid != null);
+        if (fluid != null)
+            ByteBufUtils.writeUTF8String(buffer, FluidRegistry.getFluidName(fluid));
         ByteBufUtils.writeVarInt(buffer, getCD(), 4);
     }
 
     @Override
     public void readSpawnData(ByteBuf buffer) {
-        fluid = FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buffer));
+        boolean tmp = buffer.readBoolean();
+        if (tmp)
+            fluid = FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buffer));
         updateCD(ByteBufUtils.readVarInt(buffer, 4));
     }
 

@@ -25,8 +25,9 @@ public class TOPIntegration {
         @Nullable
         @Override
         public Void apply(ITheOneProbe probe) {
-            probe.registerEntityProvider(new InfoProvider());
-            probe.registerProvider(new InfoProvider());
+            InfoProvider infoProvider = new InfoProvider();
+            probe.registerEntityProvider(infoProvider);
+            probe.registerProvider(infoProvider);
             return null;
         }
     }
@@ -42,8 +43,10 @@ public class TOPIntegration {
                                        Entity entity, IProbeHitEntityData data) {
             if (entity instanceof EntityFluidCow) {
                 EntityFluidCow e = (EntityFluidCow) entity;
-                info.horizontal().text("Fluid Name: " + FCUtils.getFluidName(e.fluid));
-                info.horizontal().text("Next usage: " + e.fluid.getRarity().color + FCUtils.toTime(e.getCD() / 20));
+                info.horizontal().text("Fluid Name: " + e.fluid.getRarity().color + FCUtils.getFluidName(e.fluid));
+                info.horizontal().text("Next usage: " + e.fluid.getRarity().color + FCUtils.toTime(e.getCD() / 20, "Now"));
+                int age = e.getGrowingAge();
+                info.horizontal().text((age < 0 ? "Growing Age: " : "Breeding Time: ") + e.fluid.getRarity().color + (FCUtils.toTime(Math.abs(age / 20), "Ready")));
             }
         }
 
@@ -54,7 +57,7 @@ public class TOPIntegration {
                 StallTileEntity te = (StallTileEntity) tile;
                 if (te.fluid != null) {
                     probeInfo.horizontal().text("Fluid Name: " + FCUtils.getFluidName(te.fluid));
-                    probeInfo.horizontal().text("Next usage: " + te.fluid.getRarity().color + FCUtils.toTime(te.cd / 20));
+                    probeInfo.horizontal().text("Next usage: " + te.fluid.getRarity().color + FCUtils.toTime(te.cd / 20, "Now"));
                     probeInfo.horizontal().text("Shift + Right Click to open inventory!");
                 } else {
                     probeInfo.horizontal().text("Put cow in Stall with Cow Halter!");

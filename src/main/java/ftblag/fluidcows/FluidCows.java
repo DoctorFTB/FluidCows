@@ -71,7 +71,7 @@ public class FluidCows {
             HwylaIntegration.reg();
         }
         EntityRegistry.registerModEntity(new ResourceLocation(MODID, "fluidcow"), EntityFluidCow.class, MODID + "." + "fluidcow", 0, this, 64, 1, true, 0xFFFFFF, 0xFFFFFF);
-        EntityRegistry.addSpawn(EntityFluidCow.class, 8, 4, 4, EnumCreatureType.CREATURE, ForgeRegistries.BIOMES.getValues().toArray(new Biome[0]));
+//        EntityRegistry.addSpawn(EntityFluidCow.class, 8, 4, 4, EnumCreatureType.CREATURE, ForgeRegistries.BIOMES.getValues().toArray(new Biome[0]));
         ForgeRegistries.BLOCKS.register(stall = new StallBlock());
         ForgeRegistries.ITEMS.registerAll(new ItemBlock(stall).setRegistryName(stall.getRegistryName()), halter = new ItemCowHalter(), displayer = new ItemCowDisplayer());
         GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "stall"), null, new ItemStack(stall), "B B", "BHB", "GGG", 'B', Blocks.IRON_BARS, 'H', Blocks.HAY_BLOCK, 'G', new ItemStack(Blocks.CONCRETE, 1, 7));
@@ -98,6 +98,8 @@ public class FluidCows {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         FCConfig.load();
+        if (FCConfig.FLUIDS.size() > 0)
+            EntityRegistry.addSpawn(EntityFluidCow.class, 8, 4, 4, EnumCreatureType.CREATURE, ForgeRegistries.BIOMES.getValues().toArray(new Biome[0]));
         info("This is info! Support " + FCUtils.getBucketFluids().size() + " fluids. Can spawn " + FCConfig.FLUIDS.size() + " cows.");
     }
 

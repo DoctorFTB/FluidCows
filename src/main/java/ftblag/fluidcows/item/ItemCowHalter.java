@@ -85,7 +85,7 @@ public class ItemCowHalter extends BaseItem {
         if (constCow(stack)) {
             Fluid fluid = FluidRegistry.getFluid(stack.getTagCompound().getString(EntityFluidCow.TYPE_FLUID));
             tooltip.add("Fluid name: " + FCUtils.getFluidName(fluid));
-            tooltip.add("Next usage: " + FCUtils.toTime(stack.getTagCompound().getInteger(EntityFluidCow.TYPE_CD) / 20));
+            tooltip.add("Next usage: " + FCUtils.toTime(stack.getTagCompound().getInteger(EntityFluidCow.TYPE_CD) / 20, "Now"));
         } else {
             tooltip.add("Empty. Right Click to cow to put!");
         }

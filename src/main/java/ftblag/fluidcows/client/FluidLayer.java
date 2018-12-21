@@ -2,7 +2,11 @@ package ftblag.fluidcows.client;
 
 import ftblag.fluidcows.entity.EntityFluidCow;
 import ftblag.fluidcows.util.FCUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -16,6 +20,8 @@ import static net.minecraft.client.renderer.GlStateManager.*;
 public class FluidLayer implements LayerRenderer<EntityFluidCow> {
     private final RenderFluidCow renderer;
 
+    private static final ModelFluidCow modelCow = new ModelFluidCow();
+
     public FluidLayer(RenderFluidCow rendererIn) {
         this.renderer = rendererIn;
     }
@@ -27,9 +33,12 @@ public class FluidLayer implements LayerRenderer<EntityFluidCow> {
             return;
         }
 
+        TextureAtlasSprite icon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
+
         pushMatrix();
 
-        this.renderer.bindTexture(FCUtils.getFluidRL(fluid));
+//        this.renderer.bindTexture(FCUtils.getFluidRL(fluid));
+        renderer.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         enableAlpha();
         enableBlend();
@@ -38,13 +47,30 @@ public class FluidLayer implements LayerRenderer<EntityFluidCow> {
         int rgb = 0xff000000 | fluid.getColor();
         color(((rgb >> 16) & 0xFF) / 255F, ((rgb >> 8) & 0xFF) / 255F, ((rgb >> 0) & 0xFF) / 255F, 0.5F);
 
-//        Color color = new Color(fluid.getColor());
-//        color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F, 0.5F);
-
         doPolygonOffset(-3.0F, -3.0F);
         enablePolygonOffset();
 
-        this.renderer.getMainModel().render(entitylivingbaseIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+
+        GlStateManager.matrixMode(GL11.GL_TEXTURE);
+        pushMatrix();
+        loadIdentity();
+
+
+        translate(icon.getMinU(), icon.getMinV(), 0);
+        scale(icon.getMaxU()-icon.getMinU(), icon.getMaxV()-icon.getMinV(), 1);
+
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+        modelCow.isChild = renderer.getMainModel().isChild;
+        /*this.renderer.getMainModel()*/modelCow.render(entitylivingbaseIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+
+
+        GlStateManager.matrixMode(GL11.GL_TEXTURE);
+        GlStateManager.loadIdentity();
+        GlStateManager.popMatrix();
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+
         doPolygonOffset(0F, 0F);
         disablePolygonOffset();
 
