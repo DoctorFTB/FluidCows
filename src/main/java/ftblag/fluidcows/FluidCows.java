@@ -8,7 +8,10 @@ import ftblag.fluidcows.client.RenderStallTile;
 import ftblag.fluidcows.entity.EntityFluidCow;
 import ftblag.fluidcows.gson.FCConfig;
 import ftblag.fluidcows.integration.HwylaIntegration;
+import ftblag.fluidcows.integration.NotEnoughWandsIntegration;
+import ftblag.fluidcows.integration.ProjectEIntegration;
 import ftblag.fluidcows.integration.TOPIntegration;
+import ftblag.fluidcows.integration.TorcherinoIntegration;
 import ftblag.fluidcows.item.ItemCowDisplayer;
 import ftblag.fluidcows.item.ItemCowHalter;
 import ftblag.fluidcows.util.FCUtils;
@@ -101,6 +104,15 @@ public class FluidCows {
         if (FCConfig.FLUIDS.size() > 0)
             EntityRegistry.addSpawn(EntityFluidCow.class, 8, 4, 4, EnumCreatureType.CREATURE, ForgeRegistries.BIOMES.getValues().toArray(new Biome[0]));
         info("This is info! Support " + FCUtils.getBucketFluids().size() + " fluids. Can spawn " + FCConfig.FLUIDS.size() + " cows.");
+        if (Loader.isModLoaded("projecte") && FCConfig.projecteTickRemove) {
+            ProjectEIntegration.reg();
+        }
+        if (Loader.isModLoaded("notenoughwands") && FCConfig.notenoughwandsTickRemove) {
+            NotEnoughWandsIntegration.reg();
+        }
+        if (Loader.isModLoaded("torcherino") && FCConfig.torcherinoTickRemove) {
+            TorcherinoIntegration.reg();
+        }
     }
 
     public static void info(String msg) {
