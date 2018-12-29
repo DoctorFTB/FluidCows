@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,9 +86,12 @@ public class FCUtils {
 
     public static String toTime(int secondstoAdd, String zero) {
         int newSofd = ((int) (secondstoAdd % SECONDS_PER_DAY) + SECONDS_PER_DAY) % SECONDS_PER_DAY;
+        int newHour = newSofd / SECONDS_PER_HOUR;
         int newMinute = (newSofd / SECONDS_PER_MINUTE) % MINUTES_PER_HOUR;
         int newSecond = newSofd % SECONDS_PER_MINUTE;
-        return newMinute != 0 || newSecond != 0 ? String.format("%02d:%02d", newMinute, newSecond) : zero;
+        if (newHour == 0 && newMinute == 0 && newSecond == 0)
+            return zero;
+        return newHour != 0 ? String.format("%02d:%02d:%02d", newHour, newMinute, newSecond) : String.format("%02d:%02d", newMinute, newSecond);
     }
 
     public static ResourceLocation gLoc(String s) {
