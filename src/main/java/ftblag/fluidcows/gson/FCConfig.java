@@ -12,7 +12,7 @@ import java.util.*;
 public class FCConfig {
 
     public static final String COMMENT = "_Comment", RATE = "SpawnRate", ENABLE = "IsEnabled", WORLD = "WorldCooldown", STALL = "StallCooldown", BREEDING_CHANCE = "BreedingChance", BREEDING_COOLDOWN = "BreedingCooldown", GROWING_BABY = "GrowingAge", PARENT_1 = "Parent First", PARENT_2 = "Parent Second";
-    public static final String COMMENT_GENERAL = "_Comment General", GENERAL = "General", BREEDING = "BreedingItemWork", PROJECTETICK = "ProjectETickRemove", NOTENOWANDSTICK = "NotEnoughtWandsTickRemove", TORCHERINOTICK = "TorcherinoTickRemove";
+    public static final String COMMENT_GENERAL = "_Comment General", GENERAL = "General", BREEDING = "BreedingItemWork", PROJECTETICK = "ProjectETickRemove", NOTENOWANDSTICK = "NotEnoughtWandsTickRemove", TORCHERINOTICK = "TorcherinoTickRemove", BREEDINGITEMMACHINES = "DisableBreedingItemForMachines";
     private static final FluidInfo def = new FluidInfo(0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, 0, Integer.MAX_VALUE, Integer.MIN_VALUE);
 
     private static JsonConfig parser;
@@ -23,7 +23,7 @@ public class FCConfig {
     public static HashMap<CustomPair<String, String>, List<Fluid>> breed = new HashMap<>();
     public static HashSet<Fluid> canBreed = new HashSet<>();
     public static boolean breedingItemWork;
-    public static boolean projecteTickRemove, notenoughwandsTickRemove, torcherinoTickRemove;
+    public static boolean projecteTickRemove, notenoughwandsTickRemove, torcherinoTickRemove, disableBreedingItemForMachines;
     private static HashMap<String, FluidInfo> registry = new HashMap<>();
 
     public static boolean loaded;
@@ -52,11 +52,13 @@ public class FCConfig {
         parser.getOrDefString(COMMENT_GENERAL, PROJECTETICK, "If true - \"Watch of Flowing Time\" not work on Cow Stall. From mod \"ProjectE\"");
         parser.getOrDefString(COMMENT_GENERAL, NOTENOWANDSTICK, "If true - \"Acceleration Wand\" not work on Cow Stall. From mod \"Not Enough Wand\"");
         parser.getOrDefString(COMMENT_GENERAL, TORCHERINOTICK, "If true - all types \"Torcherino\" not work on Cow Stall. From mod \"Torcherino\"");
+        parser.getOrDefString(COMMENT_GENERAL, BREEDINGITEMMACHINES, "Disables get breeding item via machines\n");
 
         breedingItemWork = parser.getOrDefBoolean(GENERAL, BREEDING, false);
         projecteTickRemove = parser.getOrDefBoolean(GENERAL, PROJECTETICK, false);
         notenoughwandsTickRemove = parser.getOrDefBoolean(GENERAL, NOTENOWANDSTICK, false);
         torcherinoTickRemove = parser.getOrDefBoolean(GENERAL, TORCHERINOTICK, false);
+        disableBreedingItemForMachines = parser.getOrDefBoolean(GENERAL, BREEDINGITEMMACHINES, false);
 
         registry.clear();
         FLUIDS.clear();

@@ -104,20 +104,27 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
             }
         }
 
-        if (FCConfig.breedingItemWork) {
-            if (this.isChild() && this.isBreedingItem(stack)) {
-                this.consumeItemFromStack(player, stack);
-                this.ageUp((int) ((float) (-this.getGrowingAge() / 20) * 0.1F), true);
+        if (!(player instanceof FakePlayer)) {
+            if (FCConfig.breedingItemWork) {
+                if (this.isChild() && stack.getItem() == Items.WHEAT) {
+                    this.consumeItemFromStack(player, stack);
+                    this.ageUp((int) ((float) (-this.getGrowingAge() / 20) * 0.1F), true);
+                    return true;
+                }
+            }
+
+            if (stack.getItem() == Items.WHEAT && getGrowingAge() == 0 && !isInLove()) {
+                consumeItemFromStack(player, stack);
+                setInLove(player);
                 return true;
             }
         }
-
-        if (isBreedingItem(stack) && getGrowingAge() == 0 && !isInLove()) {
-            consumeItemFromStack(player, stack);
-            setInLove(player);
-            return true;
-        }
         return false;
+    }
+
+    @Override
+    public boolean isBreedingItem(ItemStack stack) {
+        return !FCConfig.disableBreedingItemForMachines && stack.getItem() == Items.WHEAT;
     }
 
     @Override
