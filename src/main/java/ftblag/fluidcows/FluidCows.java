@@ -8,6 +8,7 @@ import ftblag.fluidcows.client.RenderStallTile;
 import ftblag.fluidcows.entity.EntityFluidCow;
 import ftblag.fluidcows.gson.FCConfig;
 import ftblag.fluidcows.integration.HwylaIntegration;
+import ftblag.fluidcows.integration.MekanismIntegration;
 import ftblag.fluidcows.integration.NotEnoughWandsIntegration;
 import ftblag.fluidcows.integration.ProjectEIntegration;
 import ftblag.fluidcows.integration.TOPIntegration;
@@ -112,6 +113,9 @@ public class FluidCows {
         }
         if (Loader.isModLoaded("torcherino") && FCConfig.torcherinoTickRemove) {
             TorcherinoIntegration.reg();
+        }
+        if (Loader.isModLoaded("mekanism")) {
+            MekanismIntegration.reg();
         }
     }
 
