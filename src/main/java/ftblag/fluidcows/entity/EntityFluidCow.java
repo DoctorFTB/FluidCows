@@ -41,16 +41,12 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
         super(worldIn);
         if (fluid != null)
             updateCD(FCConfig.getWorldCD(fluid.getName()));
-        if (fluid == null)
-            setDead();
     }
 
     public EntityFluidCow(World world, Fluid fluid) {
         super(world);
         this.fluid = fluid;
         updateCD(FCConfig.getWorldCD(fluid.getName()));
-        if (fluid == null)
-            setDead();
     }
 
     @Override
@@ -186,6 +182,8 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
         fluid = FluidRegistry.getFluid(compound.getString(TYPE_FLUID));
         if (fluid == null || !FCConfig.isEnable(fluid.getName()))
             fluid = FCUtils.getRandFluid();
+        if (fluid == null)
+            setDead();
         updateCD(compound.getInteger(TYPE_CD));
     }
 

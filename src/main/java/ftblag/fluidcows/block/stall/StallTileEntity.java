@@ -73,7 +73,8 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
         originalNBT = null;
         fluid = null;
         cd = 0;
-        StallBlock.update(getWorld(), getPos(), false);
+        if (getWorld() != null)
+            StallBlock.update(getWorld(), getPos(), false);
         markDirtyClient();
         return tag;
     }
@@ -168,10 +169,11 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
             fluid = null;
             cd = 0;
         }
-        if (fluid != null && !FCConfig.isEnable(fluid.getName()))
+        if (fluid != null && !FCConfig.isEnable(fluid.getName())) {
             fluid = FCUtils.getRandFluid();
-        if (fluid == null)
-            removeEntity();
+            if (fluid == null)
+                removeEntity();
+        }
         else if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             cow = hasCow ? new EntityFluidCow(getWorld(), fluid) : null;
         }
