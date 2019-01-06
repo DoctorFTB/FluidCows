@@ -73,7 +73,7 @@ public class FluidCows {
         if (Loader.isModLoaded("waila")) {
             HwylaIntegration.reg();
         }
-        EntityRegistry.registerModEntity(new ResourceLocation(MODID, "fluidcow"), EntityFluidCow.class, MODID + "." + "fluidcow", 0, this, 64, 1, true, 0xFFFFFF, 0xFFFFFF);
+        EntityRegistry.registerModEntity(new ResourceLocation(MODID, "fluidcow"), EntityFluidCow.class, MODID + "." + "fluidcow", 0, this, 64, 1, true);
 //        EntityRegistry.addSpawn(EntityFluidCow.class, 8, 4, 4, EnumCreatureType.CREATURE, ForgeRegistries.BIOMES.getValues().toArray(new Biome[0]));
         ForgeRegistries.BLOCKS.register(stall = new StallBlock());
         ForgeRegistries.ITEMS.registerAll(new ItemBlock(stall).setRegistryName(stall.getRegistryName()), halter = new ItemCowHalter(), displayer = new ItemCowDisplayer());

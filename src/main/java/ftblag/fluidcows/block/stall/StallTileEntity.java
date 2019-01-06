@@ -53,17 +53,23 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
         fluid = FluidRegistry.getFluid(tag.getString(EntityFluidCow.TYPE_FLUID));
         if (!FCConfig.isEnable(fluid.getName()))
             fluid = FCUtils.getRandFluid();
-        cd = tag.getInteger(EntityFluidCow.TYPE_CD);
-        originalNBT = tag;
-        StallBlock.update(getWorld(), getPos(), true);
-        markDirtyClient();
+        if (fluid == null)
+            removeEntity();
+        else {
+            cd = tag.getInteger(EntityFluidCow.TYPE_CD);
+            originalNBT = tag;
+            StallBlock.update(getWorld(), getPos(), true);
+            markDirtyClient();
+        }
     }
 
     public NBTTagCompound removeEntity() {
         hasCow = false;
         NBTTagCompound tag = originalNBT;
-        tag.setString(EntityFluidCow.TYPE_FLUID, FluidRegistry.getFluidName(fluid));
-        tag.setInteger(EntityFluidCow.TYPE_CD, cd);
+        if (fluid != null) {
+            tag.setString(EntityFluidCow.TYPE_FLUID, FluidRegistry.getFluidName(fluid));
+            tag.setInteger(EntityFluidCow.TYPE_CD, cd);
+        }
         originalNBT = null;
         fluid = null;
         cd = 0;
@@ -138,10 +144,12 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
         if (originalNBT != null)
             tag.setTag("originall", originalNBT);
         tag.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
-        tag.setBoolean("cow", hasCow);
-        if (hasCow) {
-            tag.setString(EntityFluidCow.TYPE_FLUID, FluidRegistry.getFluidName(fluid));
-            tag.setInteger(EntityFluidCow.TYPE_CD, cd);
+        if (fluid != null) {
+            tag.setBoolean("cow", hasCow);
+            if (hasCow) {
+                tag.setString(EntityFluidCow.TYPE_FLUID, FluidRegistry.getFluidName(fluid));
+                tag.setInteger(EntityFluidCow.TYPE_CD, cd);
+            }
         }
         return tag;
     }
@@ -162,7 +170,9 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
         }
         if (fluid != null && !FCConfig.isEnable(fluid.getName()))
             fluid = FCUtils.getRandFluid();
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+        if (fluid == null)
+            removeEntity();
+        else if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             cow = hasCow ? new EntityFluidCow(getWorld(), fluid) : null;
         }
     }

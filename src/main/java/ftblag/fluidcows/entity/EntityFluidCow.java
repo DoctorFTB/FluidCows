@@ -41,12 +41,16 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
         super(worldIn);
         if (fluid != null)
             updateCD(FCConfig.getWorldCD(fluid.getName()));
+        if (fluid == null)
+            setDead();
     }
 
     public EntityFluidCow(World world, Fluid fluid) {
         super(world);
         this.fluid = fluid;
         updateCD(FCConfig.getWorldCD(fluid.getName()));
+        if (fluid == null)
+            setDead();
     }
 
     @Override

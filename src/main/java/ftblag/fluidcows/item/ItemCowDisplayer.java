@@ -18,8 +18,11 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -85,6 +88,15 @@ public class ItemCowDisplayer extends BaseItem {
     }
 
     @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("fluid", Constants.NBT.TAG_STRING)) {
+            String name = FCUtils.getFluidName(FluidRegistry.getFluid(stack.getTagCompound().getString("fluid")));
+            return I18n.translateToLocal("entity.fluidcows.fluidcow.name").trim() + ": " + name;
+        }
+        return "Error";
+    }
+
+    @Override
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack itemstack = player.getHeldItem(hand);
 
@@ -95,9 +107,21 @@ public class ItemCowDisplayer extends BaseItem {
         } else {
             BlockPos blockpos = pos.offset(facing);
             double d0 = this.getYOffset(worldIn, blockpos);
-            Entity entity = spawnCreature(worldIn, FluidRegistry.getFluid(itemstack.getTagCompound().getString("fluid")), (double) blockpos.getX() + 0.5D, (double) blockpos.getY() + d0, (double) blockpos.getZ() + 0.5D);
+            String fName = itemstack.getTagCompound().getString("fluid");
+
+            if (!FCConfig.isEnable(fName)) {
+                player.sendMessage(new TextComponentString("Failed to spawn cow, due to its disabled"));
+                return EnumActionResult.FAIL;
+            }
+
+            Entity entity = spawnCreature(worldIn, FluidRegistry.getFluid(fName), (double) blockpos.getX() + 0.5D, (double) blockpos.getY() + d0, (double) blockpos.getZ() + 0.5D);
 
             if (entity != null) {
+                if (!player.capabilities.isCreativeMode) {
+                    itemstack.shrink(1);
+                }
+            } else {
+                player.sendMessage(new TextComponentString("Failed to spawn cow!"));
                 if (!player.capabilities.isCreativeMode) {
                     itemstack.shrink(1);
                 }

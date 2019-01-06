@@ -41,7 +41,7 @@ public class StallBlock extends BaseBlock implements ITileEntityProvider {
 
     public static void update(World world, BlockPos pos, boolean cow) {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() == FluidCows.stall)
+        if (state.getBlock() == FluidCows.stall && state.getValue(HASCOW) != cow)
             world.setBlockState(pos, FluidCows.stall.getDefaultState().withProperty(FACING, state.getValue(FACING)).withProperty(HASCOW, cow));
     }
 
