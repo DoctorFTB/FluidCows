@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class EntityFluidCow extends EntityCowCopy /*implements IEntityAdditionalSpawnData*/ {
+public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSpawnData {
 
     public static final String TYPE_FLUID = "t_fluid", TYPE_CD = "t_cd";
     private static final DataParameter<Integer> CD = EntityDataManager.createKey(EntityFluidCow.class, DataSerializers.VARINT);
@@ -90,17 +90,20 @@ public class EntityFluidCow extends EntityCowCopy /*implements IEntityAdditional
         if (getCD() == 0 && fluid != null && !isChild()) {
             ItemStack copy = ItemHandlerHelper.copyStackWithSize(stack, 1);
             IFluidHandlerItem fluidItem = FluidUtil.getFluidHandler(copy);
-            if (fluidItem != null && fluidItem.fill(new FluidStack(fluid, Fluid.BUCKET_VOLUME), true) == Fluid.BUCKET_VOLUME) {
-                player.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F);
-                copy = fluidItem.getContainer().copy();
-                stack.shrink(1);
-                if (stack.isEmpty()) {
-                    player.setHeldItem(hand, copy);
-                } else if (!player.inventory.addItemStackToInventory(copy)) {
-                    player.dropItem(copy, false);
+            if (fluidItem != null) {
+                int fill = fluidItem.fill(new FluidStack(fluid, Fluid.BUCKET_VOLUME), true);
+                if (fill == Fluid.BUCKET_VOLUME) {
+                    player.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F);
+                    copy = fluidItem.getContainer().copy();
+                    stack.shrink(1);
+                    if (stack.isEmpty()) {
+                        player.setHeldItem(hand, copy);
+                    } else if (!player.inventory.addItemStackToInventory(copy)) {
+                        player.dropItem(copy, false);
+                    }
+                    updateCD(FCConfig.getWorldCD(fluid.getName()));
+                    return true;
                 }
-                updateCD(FCConfig.getWorldCD(fluid.getName()));
-                return true;
             }
         }
 
@@ -187,21 +190,29 @@ public class EntityFluidCow extends EntityCowCopy /*implements IEntityAdditional
         updateCD(compound.getInteger(TYPE_CD));
     }
 
-//    @Override
-//    public void writeSpawnData(ByteBuf buffer) {
-//        buffer.writeBoolean(fluid != null);
-//        if (fluid != null)
-//            ByteBufUtils.writeUTF8String(buffer, FluidRegistry.getFluidName(fluid));
-//        ByteBufUtils.writeVarInt(buffer, getCD(), 4);
-//    }
-//
-//    @Override
-//    public void readSpawnData(ByteBuf buffer) {
-//        boolean tmp = buffer.readBoolean();
-//        if (tmp)
-//            fluid = FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buffer));
-//        updateCD(ByteBufUtils.readVarInt(buffer, 4));
-//    }
+    @Override
+    public void writeSpawnData(ByteBuf buffer) {
+        if (fluid != null) {
+            String str = FluidRegistry.getFluidName(fluid);
+            if (str != null) {
+                buffer.writeBoolean(true);
+                ByteBufUtils.writeUTF8String(buffer, FluidRegistry.getFluidName(fluid));
+            } else {
+                buffer.writeBoolean(false);
+            }
+        } else {
+            buffer.writeBoolean(false);
+        }
+        ByteBufUtils.writeVarInt(buffer, getCD(), 4);
+    }
+
+    @Override
+    public void readSpawnData(ByteBuf buffer) {
+        boolean tmp = buffer.readBoolean();
+        if (tmp)
+            fluid = FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buffer));
+        updateCD(ByteBufUtils.readVarInt(buffer, 4));
+    }
 
     @Override
     public ItemStack getPickedResult(RayTraceResult target) {

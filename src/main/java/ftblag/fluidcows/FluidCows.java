@@ -126,4 +126,8 @@ public class FluidCows {
     public static void warn(String msg) {
         log.warn("[FluidCows] " + msg);
     }
+
+    public static void debug(String msg) {
+        log.info("[FluidCows] DEBUG: " + msg);
+    }
 }

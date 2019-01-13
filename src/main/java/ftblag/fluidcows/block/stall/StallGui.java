@@ -1,6 +1,7 @@
 package ftblag.fluidcows.block.stall;
 
 import ftblag.fluidcows.base.BaseGui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,6 +39,10 @@ public class StallGui extends BaseGui {
         super.drawGuiContainerBackgroundLayer(f, mX, mY);
         if (fluidTank.getFluid() != null) {
             Fluid fluid = fluidTank.getFluid().getFluid();
+
+            int rgb = 0xff000000 | fluid.getColor();
+            GlStateManager.color(((rgb >> 16) & 0xFF) / 255F, ((rgb >> 8) & 0xFF) / 255F, ((rgb >> 0) & 0xFF) / 255F, 0.5F);
+
             TextureAtlasSprite fluidTexture = mc.getTextureMapBlocks().getTextureExtry(fluid.getFlowing().toString());
             mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             int fluidHeight = fluidTank.getFluidAmount() * 74 / fluidTank.getCapacity();
