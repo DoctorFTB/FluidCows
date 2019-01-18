@@ -87,7 +87,7 @@ public class ItemCowHalter extends BaseItem {
             tooltip.add("Fluid name: " + FCUtils.getFluidName(fluid));
             tooltip.add("Next usage: " + FCUtils.toTime(stack.getTagCompound().getInteger(EntityFluidCow.TYPE_CD) / 20, "Now"));
         } else {
-            tooltip.add("Empty. Right Click to cow to put!");
+            tooltip.add("Empty. Right Click on cow to pick it up!");
         }
     }
 }

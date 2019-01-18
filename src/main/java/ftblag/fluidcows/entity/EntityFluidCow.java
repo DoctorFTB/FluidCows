@@ -20,6 +20,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.Fluid;
@@ -142,7 +144,7 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (getCD() == 0 && fluid != null && fluid.canBePlacedInWorld()) {
+        if (getCD() == 0 && fluid != null) {
             if (source instanceof EntityDamageSource) {
                 EntityDamageSource sour = (EntityDamageSource) source;
                 if (sour.damageType.equals("player")) {
@@ -150,16 +152,30 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
                     if (!(pl instanceof FakePlayer)) {
                         ItemStack hand = pl.getHeldItemMainhand();
                         if (!hand.isEmpty() && hand.getItem() == Items.STICK) {
-                            if (getEntityWorld().isAirBlock(getPosition()) && !getEntityWorld().isRemote) {
-                                getEntityWorld().setBlockState(getPosition(), fluid.getBlock().getDefaultState());
+                            if (fluid.canBePlacedInWorld()) {
+                                if (getEntityWorld().isAirBlock(getPosition()) && !getEntityWorld().isRemote) {
+                                    getEntityWorld().setBlockState(getPosition(), fluid.getBlock().getDefaultState());
+                                }
+                                updateCD(FCConfig.getWorldCD(fluid.getName()));
+                            } else {
+                                pl.sendMessage(new TextComponentString("This fluid not supported!"));
                             }
-                            updateCD(FCConfig.getWorldCD(fluid.getName()));
                         }
                     }
                 }
             }
         }
         return super.attackEntityFrom(source, amount);
+    }
+
+    @Override
+    public String getName() {
+        String name = super.getName();
+        if (fluid != null) {
+            String fName = FCUtils.getFluidName(fluid);
+            name += " (" + fName + ")";
+        }
+        return name;
     }
 
     @Override

@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(modid = FluidCows.MODID, value = Side.CLIENT)
-public class FCEvents {
+public class FCClientEvents {
 
     private static Map<Fluid, Integer> fluidColorMap = new HashMap<>();
 

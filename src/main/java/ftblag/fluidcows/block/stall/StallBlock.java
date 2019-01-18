@@ -28,6 +28,7 @@ import java.util.List;
 
 public class StallBlock extends BaseBlock implements ITileEntityProvider {
 
+    private static final AxisAlignedBB STALL_BOX = new AxisAlignedBB(0.065, 0, 0.06, 0.935, 0.96 ,1);
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
     public static final PropertyBool HASCOW = PropertyBool.create("cow");
 
@@ -118,21 +119,8 @@ public class StallBlock extends BaseBlock implements ITileEntityProvider {
     }
 
     @Override
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox,
-                                      List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn,
-                                      boolean isActualState) {
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
-    }
-
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        return NULL_AABB;
-    }
-
-    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return FULL_BLOCK_AABB;
+        return STALL_BOX;
     }
 
     @Override
