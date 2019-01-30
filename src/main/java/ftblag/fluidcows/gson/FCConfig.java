@@ -11,8 +11,33 @@ import java.util.*;
 
 public class FCConfig {
 
-    public static final String COMMENT = "_Comment", RATE = "SpawnRate", ENABLE = "IsEnabled", WORLD = "WorldCooldown", STALL = "StallCooldown", BREEDING_CHANCE = "BreedingChance", BREEDING_COOLDOWN = "BreedingCooldown", GROWING_BABY = "GrowingAge", PARENT_1 = "Parent First", PARENT_2 = "Parent Second";
-    public static final String COMMENT_GENERAL = "_Comment General", GENERAL = "General", BREEDING = "BreedingItemWork", PROJECTETICK = "ProjectETickRemove", NOTENOWANDSTICK = "NotEnoughtWandsTickRemove", TORCHERINOTICK = "TorcherinoTickRemove", BREEDINGITEMMACHINES = "DisableBreedingItemForMachines";
+    public static final String COMMENT = "_Comment",
+            RATE = "SpawnRate",
+            ENABLE = "IsEnabled",
+            WORLD = "WorldCooldown",
+            STALL = "StallCooldown",
+            BREEDING_CHANCE = "BreedingChance",
+            BREEDING_COOLDOWN = "BreedingCooldown",
+            GROWING_BABY = "GrowingAge",
+            PARENT_1 = "Parent First",
+            PARENT_2 = "Parent Second";
+    public static final String COMMENT_GENERAL = "_Comment General",
+            GENERAL = "General",
+            BREEDING = "BreedingItemWork",
+            PROJECTETICK = "ProjectETickRemove",
+            NOTENOWANDSTICK = "NotEnoughtWandsTickRemove",
+            TORCHERINOTICK = "TorcherinoTickRemove",
+            RANDOMTHINGSTICK = "randomthingsTickRemove",
+            BREEDINGITEMMACHINES = "DisableBreedingItemForMachines",
+            SPAWNWEIGHT = "FluidCowsSpawnWeight",
+            SPAWNMIN = "FluidCowsSpawnMin",
+            SPAWNMAX = "FluidCowsSpawnMax",
+            SPAWNBLACKLIST = "FluidCowsSpawnBlackListBiomes",
+            ACCELERATORMAX = "AcceleratorMaxSubstance",
+            ACCELERATORRADIUS = "AcceleratorRadius",
+            ACCELERATORPERCOW = "AcceleratorSubstancePerCow",
+            ACCELERATORMULTIPLIER = "AcceleratorMultiplier",
+            ACCELERATORWATER = "AcceleratorWaterPerConvert";
     private static final FluidInfo def = new FluidInfo(0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, 0, Integer.MAX_VALUE, Integer.MIN_VALUE);
 
     private static JsonConfig parser;
@@ -23,7 +48,10 @@ public class FCConfig {
     public static HashMap<CustomPair<String, String>, List<Fluid>> breed = new HashMap<>();
     public static HashSet<Fluid> canBreed = new HashSet<>();
     public static boolean breedingItemWork;
-    public static boolean projecteTickRemove, notenoughwandsTickRemove, torcherinoTickRemove, disableBreedingItemForMachines;
+    public static boolean projecteTickRemove, notenoughwandsTickRemove, torcherinoTickRemove, randomthingsTickRemove, disableBreedingItemForMachines;
+    public static int spawnWeight, spawnMin, spawnMax;
+    public static String[] spawnBlackListBiomes;
+    public static int acceleratorMax, acceleratorRadius, acceleratorPerCow, acceleratorMultiplier, acceleratorWater;
     private static HashMap<String, FluidInfo> registry = new HashMap<>();
 
     public static boolean loaded;
@@ -52,13 +80,37 @@ public class FCConfig {
         parser.getOrDefString(COMMENT_GENERAL, PROJECTETICK, "If true - \"Watch of Flowing Time\" not work on Cow Stall. From mod \"ProjectE\"");
         parser.getOrDefString(COMMENT_GENERAL, NOTENOWANDSTICK, "If true - \"Acceleration Wand\" not work on Cow Stall. From mod \"Not Enough Wand\"");
         parser.getOrDefString(COMMENT_GENERAL, TORCHERINOTICK, "If true - all types \"Torcherino\" not work on Cow Stall. From mod \"Torcherino\"");
-        parser.getOrDefString(COMMENT_GENERAL, BREEDINGITEMMACHINES, "Disables get breeding item via machines\n");
+        parser.getOrDefString(COMMENT_GENERAL, RANDOMTHINGSTICK, "If true - \"Time in a bottle\" not work on Cow Stall. From mod \"Random Things\"");
+        parser.getOrDefString(COMMENT_GENERAL, BREEDINGITEMMACHINES, "Disables get breeding item via machines");
+
+        parser.getOrDefString(COMMENT_GENERAL, SPAWNWEIGHT, "Fluid cows spawn weight");
+        parser.getOrDefString(COMMENT_GENERAL, SPAWNMIN, "Fluid cows spawn min");
+        parser.getOrDefString(COMMENT_GENERAL, SPAWNMAX, "Fluid cows spawn max");
+        parser.getOrDefString(COMMENT_GENERAL, SPAWNBLACKLIST, "Fluid cows spawn black list biomes (modid:name)");
+
+        parser.getOrDefString(COMMENT_GENERAL, ACCELERATORMAX, "Accelerator max substance per one wheat");
+        parser.getOrDefString(COMMENT_GENERAL, ACCELERATORRADIUS, "Accelerator working radius");
+        parser.getOrDefString(COMMENT_GENERAL, ACCELERATORPERCOW, "Accelerator one substance per one cow");
+        parser.getOrDefString(COMMENT_GENERAL, ACCELERATORMULTIPLIER, "Accelerator speed up multiplier");
+        parser.getOrDefString(COMMENT_GENERAL, ACCELERATORWATER, "Accelerator water per one substance convert");
 
         breedingItemWork = parser.getOrDefBoolean(GENERAL, BREEDING, false);
         projecteTickRemove = parser.getOrDefBoolean(GENERAL, PROJECTETICK, false);
         notenoughwandsTickRemove = parser.getOrDefBoolean(GENERAL, NOTENOWANDSTICK, false);
         torcherinoTickRemove = parser.getOrDefBoolean(GENERAL, TORCHERINOTICK, false);
+        randomthingsTickRemove = parser.getOrDefBoolean(GENERAL, RANDOMTHINGSTICK, false);
         disableBreedingItemForMachines = parser.getOrDefBoolean(GENERAL, BREEDINGITEMMACHINES, false);
+
+        spawnWeight = parser.getOrDefInt(GENERAL, SPAWNWEIGHT, 8);
+        spawnMin = parser.getOrDefInt(GENERAL, SPAWNMIN, 4);
+        spawnMax = parser.getOrDefInt(GENERAL, SPAWNMAX, 4);
+        spawnBlackListBiomes = parser.getOrDefStringArray(GENERAL, SPAWNBLACKLIST, new String[] { "modid:name1", "modid:name2" });
+
+        acceleratorMax = parser.getOrDefInt(GENERAL, ACCELERATORMAX, 6);
+        acceleratorRadius = parser.getOrDefInt(GENERAL, ACCELERATORRADIUS, 5);
+        acceleratorPerCow = parser.getOrDefInt(GENERAL, ACCELERATORPERCOW, 1);
+        acceleratorMultiplier = parser.getOrDefInt(GENERAL, ACCELERATORMULTIPLIER, 5);
+        acceleratorWater = parser.getOrDefInt(GENERAL, ACCELERATORWATER, 10);
 
         registry.clear();
         FLUIDS.clear();

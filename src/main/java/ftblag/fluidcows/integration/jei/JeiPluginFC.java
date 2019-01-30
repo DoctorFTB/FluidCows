@@ -4,6 +4,8 @@ import ftblag.fluidcows.FCTab;
 import ftblag.fluidcows.FluidCows;
 import ftblag.fluidcows.gson.CustomPair;
 import ftblag.fluidcows.gson.FCConfig;
+import ftblag.fluidcows.integration.jei.accelerator.AcceleratorCategory;
+import ftblag.fluidcows.integration.jei.accelerator.AcceleratorWrapper;
 import ftblag.fluidcows.integration.jei.breeding.BreedingCategory;
 import ftblag.fluidcows.integration.jei.breeding.BreedingWrapper;
 import ftblag.fluidcows.integration.jei.cowresult.CowResultCategory;
@@ -40,6 +42,13 @@ public class JeiPluginFC implements IModPlugin {
         return ret;
     }
 
+    private static List<AcceleratorWrapper> getAccelerators() {
+        List<AcceleratorWrapper> ret = new ArrayList<>();
+        ret.add(new AcceleratorWrapper(true));
+        ret.add(new AcceleratorWrapper(false));
+        return ret;
+    }
+
     @Override
     public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {
         subtypeRegistry.useNbtForSubtypes(FluidCows.displayer);
@@ -48,7 +57,7 @@ public class JeiPluginFC implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
-        registry.addRecipeCategories(new BreedingCategory(guiHelper), new CowResultCategory(guiHelper));
+        registry.addRecipeCategories(new BreedingCategory(guiHelper), new CowResultCategory(guiHelper), new AcceleratorCategory(guiHelper));
     }
 
     @Override
@@ -57,6 +66,9 @@ public class JeiPluginFC implements IModPlugin {
 
         registry.addRecipes(getCowResult(), CowResultCategory.UID);
         registry.addRecipeCatalyst(new ItemStack(FluidCows.stall), CowResultCategory.UID);
+
+        registry.addRecipes(getAccelerators(), AcceleratorCategory.UID);
+        registry.addRecipeCatalyst(new ItemStack(FluidCows.accelerator), AcceleratorCategory.UID);
 
         NonNullList<ItemStack> list;
         FluidCows.displayer.getSubItems(FCTab.tab, list = NonNullList.create());

@@ -37,7 +37,6 @@ public class FluidLayer implements LayerRenderer<EntityFluidCow> {
 
         pushMatrix();
 
-//        this.renderer.bindTexture(FCUtils.getFluidRL(fluid));
         renderer.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         enableAlpha();

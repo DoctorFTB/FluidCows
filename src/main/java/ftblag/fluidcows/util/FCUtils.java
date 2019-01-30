@@ -3,6 +3,9 @@ package ftblag.fluidcows.util;
 import com.google.common.collect.Sets;
 import ftblag.fluidcows.FluidCows;
 import ftblag.fluidcows.gson.FCConfig;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -22,6 +25,15 @@ public class FCUtils {
     public static Map<String, ResourceLocation> fluidRL = new HashMap<>();
     public static Map<String, String> fluidName = new HashMap<>();
     private static Set<String> bucketFluids = ReflectionHelper.getPrivateValue(FluidRegistry.class, null, "bucketFluids");
+    public static ItemStack WATER_BOTTLE;
+    public static final FluidStack WATER_BOTTLE_STACK = new FluidStack(FluidRegistry.WATER, 250);
+
+    static {
+        WATER_BOTTLE = new ItemStack(Items.POTIONITEM);
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setString("Potion", "minecraft:water");
+        WATER_BOTTLE.setTagCompound(tag);
+    }
 
     public static Set<Fluid> getBucketFluids() { // Copy from FluidRegistry#getBucketFluids
         Set<Fluid> currentBucketFluids = null;

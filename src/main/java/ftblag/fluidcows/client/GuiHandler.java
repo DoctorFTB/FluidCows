@@ -1,5 +1,8 @@
 package ftblag.fluidcows.client;
 
+import ftblag.fluidcows.block.accelerator.AcceleratorContainer;
+import ftblag.fluidcows.block.accelerator.AcceleratorGui;
+import ftblag.fluidcows.block.accelerator.AcceleratorTileEntity;
 import ftblag.fluidcows.block.stall.StallContainer;
 import ftblag.fluidcows.block.stall.StallGui;
 import ftblag.fluidcows.block.stall.StallTileEntity;
@@ -23,6 +26,8 @@ public class GuiHandler implements IGuiHandler {
             return null;
         if (ID == 1 && te instanceof StallTileEntity)
             return new StallGui(player, (IInventory) te);
+        else if (ID == 2 && te instanceof AcceleratorTileEntity)
+            return new AcceleratorGui(player, (IInventory) te);
         return null;
     }
 
@@ -35,6 +40,8 @@ public class GuiHandler implements IGuiHandler {
             return null;
         if (ID == 1 && te instanceof StallTileEntity)
             return new StallContainer(player, (IInventory) te);
+        else if (ID == 2 && te instanceof AcceleratorTileEntity)
+            return new AcceleratorContainer(player, (IInventory) te);
         return null;
     }
 }

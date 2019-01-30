@@ -1,4 +1,4 @@
-package ftblag.fluidcows.block.stall;
+package ftblag.fluidcows.block.accelerator;
 
 import ftblag.fluidcows.base.BaseGui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -9,21 +9,18 @@ import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.client.config.GuiUtils;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Arrays;
 
-@SideOnly(Side.CLIENT)
-public class StallGui extends BaseGui {
+public class AcceleratorGui extends BaseGui {
 
-    private StallTileEntity te;
+    private AcceleratorTileEntity te;
     public FluidTank fluidTank;
     private int tankX, tankY;
 
-    public StallGui(EntityPlayer p, IInventory c) {
-        super(new StallContainer(p, c), "stall", 176, 166);
-        te = ((StallTileEntity) c);
+    public AcceleratorGui(EntityPlayer p, IInventory c) {
+        super(new AcceleratorContainer(p, c), "accelerator", 176, 166);
+        te = (AcceleratorTileEntity) c;
     }
 
     @Override
@@ -62,5 +59,13 @@ public class StallGui extends BaseGui {
             GuiUtils.drawHoveringText(
                     Arrays.asList(String.format("%s/%s mb of %s", fluidTank.getFluidAmount(), fluidTank.getCapacity(), fluidTank.getFluid() != null ? fluidTank.getFluid().getLocalizedName() : "empty")), mX, mY,
                     mc.displayWidth, mc.displayHeight, -1, mc.fontRenderer);
+        int tmpX = guiLeft + xSize - 23;
+        int tmpY = guiTop + 10;
+        mc.fontRenderer.drawString(Integer.toString(te.currentWheatSubstance), tmpX - (mc.fontRenderer.getStringWidth(Integer.toString(te.currentWheatSubstance)) / 2), tmpY += 10, 0);
+        mc.fontRenderer.drawString("of", tmpX - (mc.fontRenderer.getStringWidth("of") / 2), tmpY += 10, 0);
+        mc.fontRenderer.drawString(Integer.toString(te.maxSubstance), tmpX - (mc.fontRenderer.getStringWidth(Integer.toString(te.maxSubstance)) / 2), tmpY += 10, 0);
+        if (this.isPointInRegion(145, 47, 16, 16, mX, mY)) {
+            drawHoveringText("Wheat substance", mX, mY);
+        }
     }
 }

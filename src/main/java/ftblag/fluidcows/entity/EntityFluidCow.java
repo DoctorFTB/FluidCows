@@ -20,7 +20,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
@@ -38,6 +37,8 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
     public static final String TYPE_FLUID = "t_fluid", TYPE_CD = "t_cd";
     private static final DataParameter<Integer> CD = EntityDataManager.createKey(EntityFluidCow.class, DataSerializers.VARINT);
     public Fluid fluid = FCUtils.getRandFluid();
+
+    private boolean alreadyGrowth = false;
 
     public EntityFluidCow(World worldIn) {
         super(worldIn);
@@ -66,13 +67,30 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
     @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
-        if (!getEntityWorld().isRemote && getGrowingAge() >= 0) {
-            if (getCD() > 0) {
+        if (!getEntityWorld().isRemote) {
+            alreadyGrowth = false;
+            if (getGrowingAge() >= 0 && getCD() > 0) {
                 updateCD(getCD() - 1);
             }
         }
     }
 
+    public boolean growTicks() {
+        if (!getEntityWorld().isRemote) {
+            int age = getGrowingAge();
+            if (!alreadyGrowth && age < 0) {
+                age--;
+                age = Math.min(age + FCConfig.acceleratorMultiplier, 0);
+                setGrowingAge(age);
+                if (age == 0) {
+                    onGrowingAdult();
+                }
+                alreadyGrowth = true;
+                return true;
+            }
+        }
+        return false;
+    }
     public int getCD() {
         return dataManager.get(CD);
     }

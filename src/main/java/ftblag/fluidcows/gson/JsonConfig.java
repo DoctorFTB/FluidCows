@@ -2,6 +2,7 @@ package ftblag.fluidcows.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraftforge.fml.common.LoaderException;
 
@@ -90,6 +91,27 @@ public class JsonConfig {
             def = object.get(key).getAsString();
         } else {
             object.addProperty(key, def);
+            needSave();
+        }
+
+        return def;
+    }
+
+    public String[] getOrDefStringArray(String cat, String key, String[] def) {
+
+        JsonObject object = getOrCreateCategory(cat);
+
+        if (object.has(key)) {
+            JsonArray array = object.getAsJsonArray(key);
+            int size = array.size();
+            def = new String[array.size()];
+            for (int i = 0; i < size; i++)
+                def[i] = array.get(i).getAsString();
+        } else {
+            JsonArray array = new JsonArray();
+            for (String str : def)
+                array.add(str);
+            object.add(key, array);
             needSave();
         }
 

@@ -1,12 +1,12 @@
-package ftblag.fluidcows.block.stall;
+package ftblag.fluidcows.block.accelerator;
 
 import ftblag.fluidcows.entity.EntityFluidCow;
 import ftblag.fluidcows.gson.FCConfig;
-import ftblag.fluidcows.util.FCUtils;
 import ftblag.fluidcows.util.storage.IFluidHelper;
 import ftblag.fluidcows.util.storage.IInventoryHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,36 +16,36 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import scala.collection.Map;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
-public class StallTileEntity extends TileEntity implements IInventoryHelper, IFluidHelper, ITickable {
+public class AcceleratorTileEntity extends TileEntity implements IInventoryHelper, IFluidHelper, ITickable {
 
-    public static final int amount = Fluid.BUCKET_VOLUME * 10;
+    public static final int fluidAmount = Fluid.BUCKET_VOLUME * 10;
+    public static final int maxSubstance = Fluid.BUCKET_VOLUME * 10;
 
-    public NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+    public NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
     public FluidTank tank;
-
-    public boolean hasCow = false;
-    @SideOnly(Side.CLIENT)
-    public EntityFluidCow cow;
-    public Fluid fluid;
-    public int cd;
-    private NBTTagCompound originalNBT;
+    public int currentWheatSubstance;
     private int lastFluidAmount = -1;
 
-    public StallTileEntity() {
-        tank = new FluidTank(amount) {
+    public AcceleratorTileEntity() {
+        tank = new FluidTank(fluidAmount) {
             @Override
             protected void onContentsChanged() {
                 super.onContentsChanged();
@@ -53,7 +53,6 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
             }
         };
         tank.setTileEntity(this);
-        tank.setCanFill(false);
     }
 
     private void onTankContentsChanged() {
@@ -63,69 +62,63 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
         }
     }
 
-    public void setEntity(NBTTagCompound tag) {
-        hasCow = true;
-        fluid = FluidRegistry.getFluid(tag.getString(EntityFluidCow.TYPE_FLUID));
-        if (!FCConfig.isEnable(fluid.getName()))
-            fluid = FCUtils.getRandFluid();
-        if (fluid == null)
-            removeEntity();
-        else {
-            cd = tag.getInteger(EntityFluidCow.TYPE_CD);
-            originalNBT = tag;
-            StallBlock.update(getWorld(), getPos(), true);
-            markDirtyClient();
-        }
-    }
-
-    public NBTTagCompound removeEntity() {
-        hasCow = false;
-        NBTTagCompound tag = originalNBT;
-        if (fluid != null) {
-            tag.setString(EntityFluidCow.TYPE_FLUID, FluidRegistry.getFluidName(fluid));
-            tag.setInteger(EntityFluidCow.TYPE_CD, cd);
-        }
-        originalNBT = null;
-        fluid = null;
-        cd = 0;
-        if (getWorld() != null)
-            StallBlock.update(getWorld(), getPos(), false);
-        markDirtyClient();
-        return tag;
-    }
-
-    public void spawnEntity() {
-        if (fluid != null) {
-            EntityFluidCow cow = new EntityFluidCow(world);
-            cow.setPosition(getPos().getX() + .5, getPos().getY(), getPos().getZ() + .5);
-            cow.readEntityFromNBT(removeEntity());
-            world.spawnEntity(cow);
-        }
-    }
-
     @Override
     public void update() {
-        if (!getWorld().isRemote) {
-            if (cd > 0) {
-                cd--;
+        if (getWorld().isRemote)
+            return;
+        if (getStackInSlot(1).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) && getStackInSlot(2).isEmpty() && tank.getFluidAmount() + 1000 <= fluidAmount) {
+            ItemStack bucket = getStackInSlot(1);
+            FluidActionResult result = FluidUtil.tryEmptyContainer(bucket, this, Fluid.BUCKET_VOLUME, null, true);
+            if (result.isSuccess()) {
+                decrStackSize(1, 1);
+                setInventorySlotContents(2, result.getResult());
                 markDirtyClient();
             }
-            if (cd == 0 && fluid != null) {
-                if (tank.getFluidAmount() <= amount - Fluid.BUCKET_VOLUME) {
-                    if (fillCopy(new FluidStack(fluid, Fluid.BUCKET_VOLUME), true) == Fluid.BUCKET_VOLUME)
-                        cd = FCConfig.getStallCD(fluid.getName());
-                    markDirtyClient();
+        }
+        if (getWorld().isBlockPowered(getPos()))
+            return;
+        if (!getStackInSlot(0).isEmpty()) {
+            if (currentWheatSubstance + FCConfig.acceleratorMax <= maxSubstance) {
+
+                int toAdd = Math.min(getStackInSlot(0).getCount(), 8);
+                if (toAdd > 0) {
+                    int middle = FCConfig.acceleratorMax / 2;
+
+                    boolean hasWater;
+                    if (hasWater = tank.getFluidAmount() >= FCConfig.acceleratorWater)
+                        toAdd = Math.min(tank.getFluidAmount() / FCConfig.acceleratorWater, Math.min(getStackInSlot(0).getCount(), 32));
+
+                    int addedMax = hasWater ? toAdd * FCConfig.acceleratorMax : toAdd * middle;
+
+                    if (currentWheatSubstance + addedMax > maxSubstance) {
+                        toAdd = currentWheatSubstance + (hasWater ? FCConfig.acceleratorMax : middle) <= maxSubstance ? 1 : 0;
+                    }
+
+                    if (toAdd > 0) {
+                        if (hasWater) {
+                            tank.drain(toAdd * FCConfig.acceleratorWater, true);
+                            currentWheatSubstance += toAdd * middle;
+                        }
+
+                        decrStackSize(0, toAdd);
+                        currentWheatSubstance += getWorld().rand.nextInt(toAdd * middle) + 1;
+                        markDirtyClient();
+                    }
                 }
             }
-            if (getStackInSlot(0).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) && getStackInSlot(1).isEmpty() && tank.getFluidAmount() > 0) {
-                ItemStack bucket = getStackInSlot(0);
-                FluidActionResult result = FluidUtil.tryFillContainer(bucket, this, Fluid.BUCKET_VOLUME, null, true);
-                if (result.isSuccess()) {
-                    decrStackSize(0, 1);
-                    setInventorySlotContents(1, result.getResult());
-                    markDirtyClient();
+        }
+
+        if (currentWheatSubstance > FCConfig.acceleratorPerCow) {
+            List<EntityFluidCow> cows = getWorld().getEntitiesWithinAABB(EntityFluidCow.class, new AxisAlignedBB(getPos()).grow(FCConfig.acceleratorRadius));
+            if (!cows.isEmpty())
+                for (EntityFluidCow cow : cows) {
+                    if (cow.growTicks()) {
+                        currentWheatSubstance -= FCConfig.acceleratorPerCow;
+                        markDirtyClient();
+                        if (currentWheatSubstance < FCConfig.acceleratorPerCow)
+                            break;
+                    }
                 }
-            }
         }
     }
 
@@ -141,7 +134,13 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return index == 0 && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        if (index == 0)
+            return stack.getItem() == Items.WHEAT;
+        else if (index == 2) {
+            FluidStack fluid = FluidUtil.getFluidContained(stack);
+            return fluid != null && fluid.getFluid() == FluidRegistry.WATER;
+        } else
+            return false;
     }
 
     @Override
@@ -151,23 +150,20 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
 
     @Override
     public int getAmount() {
-        return amount;
+        return fluidAmount;
+    }
+
+    @Override
+    public int fill(FluidStack resource, boolean doFill) {
+        return resource.getFluid() == FluidRegistry.WATER ? getTank().fill(resource, doFill) : 0;
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         ItemStackHelper.saveAllItems(tag, inventory);
-        if (originalNBT != null)
-            tag.setTag("originall", originalNBT);
         tag.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
-        if (fluid != null) {
-            tag.setBoolean("cow", hasCow);
-            if (hasCow) {
-                tag.setString(EntityFluidCow.TYPE_FLUID, FluidRegistry.getFluidName(fluid));
-                tag.setInteger(EntityFluidCow.TYPE_CD, cd);
-            }
-        }
+        tag.setInteger("substance", currentWheatSubstance);
         return tag;
     }
 
@@ -175,25 +171,9 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         ItemStackHelper.loadAllItems(tag, inventory);
-        originalNBT = (NBTTagCompound) tag.getTag("originall");
         tank.readFromNBT(tag.getCompoundTag("tank"));
         tank.setTileEntity(this);
-        hasCow = tag.getBoolean("cow");
-        if (hasCow) {
-            fluid = FluidRegistry.getFluid(tag.getString(EntityFluidCow.TYPE_FLUID));
-            cd = tag.getInteger(EntityFluidCow.TYPE_CD);
-        } else {
-            fluid = null;
-            cd = 0;
-        }
-        if (fluid != null && !FCConfig.isEnable(fluid.getName())) {
-            fluid = FCUtils.getRandFluid();
-            if (fluid == null)
-                removeEntity();
-        }
-        else if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
-            cow = hasCow ? new EntityFluidCow(getWorld(), fluid) : null;
-        }
+        currentWheatSubstance = tag.getInteger("substance");
     }
 
     @Override
