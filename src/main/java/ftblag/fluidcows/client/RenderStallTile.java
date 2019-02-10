@@ -3,13 +3,17 @@ package ftblag.fluidcows.client;
 import ftblag.fluidcows.FluidCows;
 import ftblag.fluidcows.block.stall.StallBlock;
 import ftblag.fluidcows.block.stall.StallTileEntity;
+import ftblag.fluidcows.gson.FCConfig;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.util.EnumFacing;
 
 public class RenderStallTile extends TileEntitySpecialRenderer<StallTileEntity> {
+
+    private static EntityCow COW;
 
     @Override
     public void render(StallTileEntity te, double x, double y, double z, float f, int d, float a) {
@@ -29,6 +33,8 @@ public class RenderStallTile extends TileEntitySpecialRenderer<StallTileEntity> 
         if (te.cow == null) {
             return;
         }
+        if (COW == null)
+            COW = new EntityCow(Minecraft.getMinecraft().world);
 
         IBlockState state = te.getWorld().getBlockState(te.getPos());
 
@@ -48,7 +54,7 @@ public class RenderStallTile extends TileEntitySpecialRenderer<StallTileEntity> 
         GlStateManager.rotate(facing.getHorizontalAngle(), 0, 1, 0);
         GlStateManager.enableLighting();
         GlStateManager.scale(0.55, 0.55, 0.55);
-        Minecraft.getMinecraft().getRenderManager().renderEntity(te.cow, 0, 0, 0, 0, 0, true);
+        Minecraft.getMinecraft().getRenderManager().renderEntity(FCConfig.hideFluidCow ? COW : te.cow, 0, 0, 0, 0, 0, true);
         GlStateManager.disableLighting();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();

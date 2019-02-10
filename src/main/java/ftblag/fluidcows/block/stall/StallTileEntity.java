@@ -44,6 +44,8 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
     private NBTTagCompound originalNBT;
     private int lastFluidAmount = -1;
 
+    private boolean lastSync = false;
+
     public StallTileEntity() {
         tank = new FluidTank(amount) {
             @Override
@@ -108,8 +110,15 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
         if (!getWorld().isRemote) {
             if (cd > 0) {
                 cd--;
-                markDirtyClient();
+                lastSync = false;
             }
+            if (cd % 10 == 0) {
+                markDirtyClient();
+            } else if (cd == 0 && !lastSync) {
+                markDirtyClient();
+                lastSync = true;
+            }
+
             if (cd == 0 && fluid != null) {
                 if (tank.getFluidAmount() <= amount - Fluid.BUCKET_VOLUME) {
                     if (fillCopy(new FluidStack(fluid, Fluid.BUCKET_VOLUME), true) == Fluid.BUCKET_VOLUME)
@@ -117,6 +126,7 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
                     markDirtyClient();
                 }
             }
+
             if (getStackInSlot(0).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) && getStackInSlot(1).isEmpty() && tank.getFluidAmount() > 0) {
                 ItemStack bucket = getStackInSlot(0);
                 FluidActionResult result = FluidUtil.tryFillContainer(bucket, this, Fluid.BUCKET_VOLUME, null, true);
@@ -125,6 +135,10 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
                     setInventorySlotContents(1, result.getResult());
                     markDirtyClient();
                 }
+            }
+        } else {
+            if (cd > 0) {
+                cd--;
             }
         }
     }

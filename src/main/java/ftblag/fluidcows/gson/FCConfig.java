@@ -21,6 +21,9 @@ public class FCConfig {
             GROWING_BABY = "GrowingAge",
             PARENT_1 = "Parent First",
             PARENT_2 = "Parent Second";
+    public static final String COMMENT_CLIENT = "_Comment Client",
+            CLIENT = "Client",
+            HIDEFLUIDCOW = "HideFluidLayerCow";
     public static final String COMMENT_GENERAL = "_Comment General",
             GENERAL = "General",
             BREEDING = "BreedingItemWork",
@@ -44,6 +47,8 @@ public class FCConfig {
 
     public static ArrayList<Fluid> FLUIDS = new ArrayList<>();
     public static int sumWeight;
+
+    public static boolean hideFluidCow;
 
     public static HashMap<CustomPair<String, String>, List<Fluid>> breed = new HashMap<>();
     public static HashSet<Fluid> canBreed = new HashSet<>();
@@ -75,6 +80,10 @@ public class FCConfig {
 
         parser.getOrDefString(COMMENT, "Tip#1", "Cow rewards? Yes! Set enable to true, rate to zero, remove parents and make recipe with CraftTweaker!");
         parser.getOrDefString(COMMENT, "Tip#2", "Only breeding cow? Yes! Set enable to true, rate to zero and add parents!");
+
+        parser.getOrDefString(COMMENT_CLIENT, HIDEFLUIDCOW, "Disable fluid render layer cow in stall");
+
+        hideFluidCow = parser.getOrDefBoolean(CLIENT, HIDEFLUIDCOW, false);
 
         parser.getOrDefString(COMMENT_GENERAL, BREEDING, "If true u can use the breeding item to get lower baby growing age");
         parser.getOrDefString(COMMENT_GENERAL, PROJECTETICK, "If true - \"Watch of Flowing Time\" not work on Cow Stall. From mod \"ProjectE\"");
