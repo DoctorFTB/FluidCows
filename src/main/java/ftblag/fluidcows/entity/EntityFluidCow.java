@@ -38,6 +38,8 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
     private static final DataParameter<Integer> CD = EntityDataManager.createKey(EntityFluidCow.class, DataSerializers.VARINT);
     public Fluid fluid = FCUtils.getRandFluid();
 
+    boolean first = true;
+
     private boolean alreadyGrowth = false;
     private int cooldown = -1;
 
@@ -73,8 +75,10 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
             cooldown--;
         }
         if (!getEntityWorld().isRemote) {
-            if (cooldown % 300 == 0)
+            if (first || (cooldown != 0 && cooldown % 300 == 0)) {
                 syncCD();
+                first = false;
+            }
         }
     }
 
@@ -266,7 +270,6 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
         if (tmp)
             fluid = FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buffer));
         updateCD(ByteBufUtils.readVarInt(buffer, 4));
-        syncCD();
     }
 
     @Override
