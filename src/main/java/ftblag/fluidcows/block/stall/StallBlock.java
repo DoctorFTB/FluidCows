@@ -40,6 +40,11 @@ public class StallBlock extends BaseBlock implements ITileEntityProvider {
         GameRegistry.registerTileEntity(StallTileEntity.class, "stall_te");
     }
 
+    @Override
+    public boolean eventReceived(IBlockState state, World worldIn, BlockPos pos, int id, int param) {
+        return worldIn.getTileEntity(pos).receiveClientEvent(id, param);
+    }
+
     public static void update(World world, BlockPos pos, boolean cow) {
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() == FluidCows.stall && state.getValue(HASCOW) != cow)
