@@ -112,8 +112,8 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
                 cd--;
                 lastSync = false;
             }
-            if (cd % 10 == 0) {
-                markDirtyClient();
+            if (fluid != null && cd != 0 && cd % 300 == 0) {
+                this.world.addBlockEvent(this.pos, this.getBlockType(), 9001, cd);
             } else if (cd == 0 && !lastSync) {
                 markDirtyClient();
                 lastSync = true;
@@ -218,6 +218,18 @@ public class StallTileEntity extends TileEntity implements IInventoryHelper, IFl
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new InvWrapper(this)) : capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY ? CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(tank) : super.getCapability(capability, facing);
+    }
+
+    @Override
+    public boolean receiveClientEvent(int id, int type) {
+        if (!this.world.isRemote)
+            return true;
+
+        if (id == 9001)
+        {
+            cd = type;
+        }
+        return true;
     }
 
     @Override

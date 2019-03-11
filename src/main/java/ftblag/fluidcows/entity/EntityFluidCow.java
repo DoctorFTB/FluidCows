@@ -38,7 +38,10 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
     private static final DataParameter<Integer> CD = EntityDataManager.createKey(EntityFluidCow.class, DataSerializers.VARINT);
     public Fluid fluid = FCUtils.getRandFluid();
 
+    boolean first = true;
+
     private boolean alreadyGrowth = false;
+    private int cooldown = -1;
 
     public EntityFluidCow(World worldIn) {
         super(worldIn);
@@ -67,10 +70,14 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
     @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
+        alreadyGrowth = false;
+        if (getGrowingAge() >= 0 && getCD() > 0) {
+            cooldown--;
+        }
         if (!getEntityWorld().isRemote) {
-            alreadyGrowth = false;
-            if (getGrowingAge() >= 0 && getCD() > 0) {
-                updateCD(getCD() - 1);
+            if (first || (cooldown != 0 && cooldown % 300 == 0)) {
+                syncCD();
+                first = false;
             }
         }
     }
@@ -92,12 +99,26 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
         return false;
     }
     public int getCD() {
-        return dataManager.get(CD);
+        return cooldown;
     }
 
     public void updateCD(int newCD) {
-        dataManager.set(CD, newCD);
+        cooldown = newCD;
+    }
+
+    public void syncCD()
+    {
+        dataManager.set(CD, cooldown);
         dataManager.setDirty(CD);
+    }
+
+    @Override
+    public void notifyDataManagerChange(DataParameter<?> key) {
+        if (CD.equals(key))
+        {
+            cooldown = dataManager.get(CD);
+        }
+        super.notifyDataManagerChange(key);
     }
 
     @Override
@@ -122,6 +143,7 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
                         player.dropItem(copy, false);
                     }
                     updateCD(FCConfig.getWorldCD(fluid.getName()));
+                    syncCD();
                     return true;
                 }
             }
@@ -175,6 +197,7 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
                                     getEntityWorld().setBlockState(getPosition(), fluid.getBlock().getDefaultState());
                                 }
                                 updateCD(FCConfig.getWorldCD(fluid.getName()));
+                                syncCD();
                             } else {
                                 pl.sendMessage(new TextComponentString("This fluid not supported!"));
                             }
@@ -222,6 +245,7 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
         if (fluid == null)
             setDead();
         updateCD(compound.getInteger(TYPE_CD));
+        syncCD();
     }
 
     @Override
