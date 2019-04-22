@@ -20,10 +20,10 @@ public abstract class BaseGui extends GuiContainer {
     }
 
     @Override
-    public void drawScreen(int mX, int mY, float f) {
+    public void drawScreen(int mouseX, int mouseY, float f) {
         drawDefaultBackground();
-        super.drawScreen(mX, mY, f);
-        renderHoveredToolTip(mX, mY);
+        super.drawScreen(mouseX, mouseY, f);
+        renderHoveredToolTip(mouseX, mouseY);
     }
 
     @Override

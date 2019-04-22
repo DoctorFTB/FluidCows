@@ -52,9 +52,7 @@ public class AcceleratorGui extends BaseGui {
 
     @Override
     public void drawScreen(int mX, int mY, float f) {
-        this.drawDefaultBackground();
         super.drawScreen(mX, mY, f);
-        this.renderHoveredToolTip(mX, mY);
         if (mX >= tankX && mY >= tankY && mX < tankX + 18 && mY < tankY + 76)
             GuiUtils.drawHoveringText(
                     Arrays.asList(String.format("%s/%s mb of %s", fluidTank.getFluidAmount(), fluidTank.getCapacity(), fluidTank.getFluid() != null ? fluidTank.getFluid().getLocalizedName() : "empty")), mX, mY,
