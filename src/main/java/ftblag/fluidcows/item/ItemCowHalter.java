@@ -4,6 +4,7 @@ import ftblag.fluidcows.FluidCows;
 import ftblag.fluidcows.base.BaseItem;
 import ftblag.fluidcows.block.stall.StallTileEntity;
 import ftblag.fluidcows.entity.EntityFluidCow;
+import ftblag.fluidcows.gson.FCConfig;
 import ftblag.fluidcows.util.FCUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,6 +15,8 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -80,6 +83,29 @@ public class ItemCowHalter extends BaseItem {
     }
 
     @Override
+    public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase player) {
+        if (player instanceof EntityPlayer) {
+            if (target instanceof EntityFluidCow) {
+                if (FCConfig.enableConvertCowToDisplayer) {
+                    EntityFluidCow cow = (EntityFluidCow) target;
+                    if (!FCConfig.blackListCowToDisplayer.contains(cow.fluid.getName())) {
+                        ItemStack displayer = ItemCowDisplayer.applyFluidToItemStack(new ItemStack(FluidCows.displayer), cow.fluid);
+                        if (((EntityPlayer) player).inventory.addItemStackToInventory(displayer)) {
+                            cow.setDead();
+                        }
+                    } else {
+                        player.sendMessage(new TextComponentString("You cant convert fluid from cow."));
+                    }
+                } else {
+                    player.sendMessage(new TextComponentString("This feature disabled."));
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         if (constCow(stack)) {
@@ -89,5 +115,8 @@ public class ItemCowHalter extends BaseItem {
         } else {
             tooltip.add("Empty. Right Click on cow to pick it up!");
         }
+        tooltip.add(TextFormatting.RED + "!Warning!");
+        tooltip.add("Left Click on cow to convert cow to displayer!");
+        tooltip.add(TextFormatting.RED + "!Warning!");
     }
 }
