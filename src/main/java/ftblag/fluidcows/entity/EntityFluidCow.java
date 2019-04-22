@@ -82,6 +82,11 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
         }
     }
 
+    @Override
+    public boolean getCanSpawnHere() {
+        return super.getCanSpawnHere() && !FCConfig.blackListDimIds.contains(world.provider.getDimension());
+    }
+
     public boolean growTicks() {
         if (!getEntityWorld().isRemote) {
             int age = getGrowingAge();
