@@ -6,14 +6,16 @@ import ftblag.fluidcows.gson.FCConfig;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.awt.*;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,5 +114,21 @@ public class FCUtils {
 
     public static ResourceLocation getRL(String s) {
         return new ResourceLocation(FluidCows.MODID, s);
+    }
+
+    public static AxisAlignedBB getAABBWithOffset(BlockPos pos, EnumFacing facing, int size) {
+        AxisAlignedBB aabb = new AxisAlignedBB(pos, pos.add(1, 1, 1));
+        aabb = growWithCustomY(aabb.offset(BlockPos.ORIGIN.offset(facing, size + 1)), size);
+        return aabb;
+    }
+
+    private static AxisAlignedBB growWithCustomY(AxisAlignedBB aabb, int size) {
+        double minX = aabb.minX - size;
+        double minY = aabb.minY;
+        double minZ = aabb.minZ - size;
+        double maxX = aabb.maxX + size;
+        double maxY = aabb.maxY + size * 2;
+        double maxZ = aabb.maxZ + size;
+        return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 }

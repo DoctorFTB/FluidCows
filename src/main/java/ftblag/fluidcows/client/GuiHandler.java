@@ -3,6 +3,12 @@ package ftblag.fluidcows.client;
 import ftblag.fluidcows.block.accelerator.AcceleratorContainer;
 import ftblag.fluidcows.block.accelerator.AcceleratorGui;
 import ftblag.fluidcows.block.accelerator.AcceleratorTileEntity;
+import ftblag.fluidcows.block.feeder.FeederContainer;
+import ftblag.fluidcows.block.feeder.FeederGui;
+import ftblag.fluidcows.block.feeder.FeederTileEntity;
+import ftblag.fluidcows.block.sorter.SorterContainer;
+import ftblag.fluidcows.block.sorter.SorterGui;
+import ftblag.fluidcows.block.sorter.SorterTileEntity;
 import ftblag.fluidcows.block.stall.StallContainer;
 import ftblag.fluidcows.block.stall.StallGui;
 import ftblag.fluidcows.block.stall.StallTileEntity;
@@ -28,6 +34,10 @@ public class GuiHandler implements IGuiHandler {
             return new StallGui(player, (IInventory) te);
         else if (ID == 2 && te instanceof AcceleratorTileEntity)
             return new AcceleratorGui(player, (IInventory) te);
+        else if (ID == 3 && te instanceof FeederTileEntity)
+            return new FeederGui(player, (IInventory) te);
+        else if (ID == 4 && te instanceof SorterTileEntity)
+            return new SorterGui(player, (IInventory) te);
         return null;
     }
 
@@ -42,6 +52,10 @@ public class GuiHandler implements IGuiHandler {
             return new StallContainer(player, (IInventory) te);
         else if (ID == 2 && te instanceof AcceleratorTileEntity)
             return new AcceleratorContainer(player, (IInventory) te);
+        else if (ID == 3 && te instanceof FeederTileEntity)
+            return new FeederContainer(player, (IInventory) te);
+        else if (ID == 4 && te instanceof SorterTileEntity)
+            return new SorterContainer(player, (IInventory) te);
         return null;
     }
 }

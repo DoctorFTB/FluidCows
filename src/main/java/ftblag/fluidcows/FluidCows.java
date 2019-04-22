@@ -1,6 +1,9 @@
 package ftblag.fluidcows;
 
+import ftblag.fluidcows.base.BaseItem;
 import ftblag.fluidcows.block.accelerator.AcceleratorBlock;
+import ftblag.fluidcows.block.feeder.FeederBlock;
+import ftblag.fluidcows.block.sorter.SorterBlock;
 import ftblag.fluidcows.block.stall.StallBlock;
 import ftblag.fluidcows.block.stall.StallTileEntity;
 import ftblag.fluidcows.client.GuiHandler;
@@ -17,6 +20,7 @@ import ftblag.fluidcows.integration.TOPIntegration;
 import ftblag.fluidcows.integration.TorcherinoIntegration;
 import ftblag.fluidcows.item.ItemCowDisplayer;
 import ftblag.fluidcows.item.ItemCowHalter;
+import ftblag.fluidcows.network.NetworkHandler;
 import ftblag.fluidcows.util.FCUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EnumCreatureType;
@@ -60,6 +64,9 @@ public class FluidCows {
     public static ItemCowHalter halter;
     public static ItemCowDisplayer displayer;
     public static AcceleratorBlock accelerator;
+    public static FeederBlock feeder;
+    public static SorterBlock sorter;
+    public static Item ranger;
 
     @Mod.Instance
     public static FluidCows instance;
@@ -80,10 +87,22 @@ public class FluidCows {
         if (Loader.isModLoaded("waila")) {
             HwylaIntegration.reg();
         }
+        NetworkHandler.reg();
         EntityRegistry.registerModEntity(new ResourceLocation(MODID, "fluidcow"), EntityFluidCow.class, MODID + "." + "fluidcow", 0, this, 64, 1, true);
 //        EntityRegistry.addSpawn(EntityFluidCow.class, 8, 4, 4, EnumCreatureType.CREATURE, ForgeRegistries.BIOMES.getValues().toArray(new Biome[0]));
-        ForgeRegistries.BLOCKS.registerAll(stall = new StallBlock(), accelerator = new AcceleratorBlock());
-        ForgeRegistries.ITEMS.registerAll(new ItemBlock(stall).setRegistryName(stall.getRegistryName()), halter = new ItemCowHalter(), displayer = new ItemCowDisplayer(), new ItemBlock(accelerator).setRegistryName(accelerator.getRegistryName()));
+        ForgeRegistries.BLOCKS.registerAll(
+                stall = new StallBlock(),
+                accelerator = new AcceleratorBlock(),
+                feeder = new FeederBlock(),
+                sorter = new SorterBlock());
+        ForgeRegistries.ITEMS.registerAll(
+                new ItemBlock(stall).setRegistryName(stall.getRegistryName()),
+                halter = new ItemCowHalter(),
+                displayer = new ItemCowDisplayer(),
+                new ItemBlock(accelerator).setRegistryName(accelerator.getRegistryName()),
+                new ItemBlock(feeder).setRegistryName(feeder.getRegistryName()),
+                new ItemBlock(sorter).setRegistryName(sorter.getRegistryName()),
+                ranger = new BaseItem("ranger").setMaxStackSize(7));
         GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "stall"), null, new ItemStack(stall), "B B", "BHB", "GGG", 'B', Blocks.IRON_BARS, 'H', Blocks.HAY_BLOCK, 'G', new ItemStack(Blocks.CONCRETE, 1, 7));
         GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "halter"), null, new ItemStack(halter), "  L", " S ", "S  ", 'L', Items.LEATHER, 'S', Items.STICK);
         GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "accelerator"), null, new ItemStack(accelerator), "IHI", "RHL", "III", 'I', Items.IRON_INGOT, 'H', Blocks.HAY_BLOCK, 'R', Blocks.REDSTONE_BLOCK, 'L', Items.LEATHER);
@@ -100,6 +119,9 @@ public class FluidCows {
         ModelLoader.setCustomModelResourceLocation(halter, 0, new ModelResourceLocation(halter.getRegistryName(), "inventory"));
         ModelLoader.setCustomModelResourceLocation(displayer, 0, new ModelResourceLocation(displayer.getRegistryName(), "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(accelerator), 0, new ModelResourceLocation(Item.getItemFromBlock(accelerator).getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(feeder), 0, new ModelResourceLocation(Item.getItemFromBlock(feeder).getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(sorter), 0, new ModelResourceLocation(Item.getItemFromBlock(sorter).getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(ranger, 0, new ModelResourceLocation(ranger.getRegistryName(), "inventory"));
     }
 
     @Mod.EventHandler
