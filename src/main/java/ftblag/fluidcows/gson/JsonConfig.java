@@ -104,7 +104,7 @@ public class JsonConfig {
         if (object.has(key)) {
             JsonArray array = object.getAsJsonArray(key);
             int size = array.size();
-            def = new String[array.size()];
+            def = new String[size];
             for (int i = 0; i < size; i++)
                 def[i] = array.get(i).getAsString();
         } else {
@@ -125,6 +125,27 @@ public class JsonConfig {
             def = object.get(key).getAsInt();
         } else {
             object.addProperty(key, def);
+            needSave();
+        }
+
+        return def;
+    }
+
+    public int[] getOrDefIntArray(String cat, String key, int[] def) {
+
+        JsonObject object = getOrCreateCategory(cat);
+
+        if (object.has(key)) {
+            JsonArray array = object.getAsJsonArray(key);
+            int size = array.size();
+            def = new int[size];
+            for (int i = 0; i < size; i++)
+                def[i] = array.get(i).getAsInt();
+        } else {
+            JsonArray array = new JsonArray();
+            for (int str : def)
+                array.add(str);
+            object.add(key, array);
             needSave();
         }
 
