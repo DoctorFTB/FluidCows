@@ -8,6 +8,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class FCConfig {
 
@@ -40,7 +42,11 @@ public class FCConfig {
             ACCELERATORRADIUS = "AcceleratorRadius",
             ACCELERATORPERCOW = "AcceleratorSubstancePerCow",
             ACCELERATORMULTIPLIER = "AcceleratorMultiplier",
-            ACCELERATORWATER = "AcceleratorWaterPerConvert";
+            ACCELERATORWATER = "AcceleratorWaterPerConvert",
+            BLACKLISTDIMIDS = "BlackListDimIds",
+            ENABLECONVERTCOWTODISPLAYER = "EnableConvertCowToDisplayer",
+            BLACKLISTCOWTODISPLAYER = "BlackListCowToDisplayer",
+            FEEDERBLACKLIST = "FeederBlackList";
     private static final FluidInfo def = new FluidInfo(0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, 0, Integer.MAX_VALUE, Integer.MIN_VALUE);
 
     private static JsonConfig parser;
@@ -57,6 +63,12 @@ public class FCConfig {
     public static int spawnWeight, spawnMin, spawnMax;
     public static String[] spawnBlackListBiomes;
     public static int acceleratorMax, acceleratorRadius, acceleratorPerCow, acceleratorMultiplier, acceleratorWater;
+
+    public static Set<Integer> blackListDimIds;
+    public static boolean enableConvertCowToDisplayer;
+    public static Set<String> blackListCowToDisplayer;
+    public static Set<String> feederBlackList;
+
     private static HashMap<String, FluidInfo> registry = new HashMap<>();
 
     public static boolean loaded;
@@ -103,6 +115,11 @@ public class FCConfig {
         parser.getOrDefString(COMMENT_GENERAL, ACCELERATORMULTIPLIER, "Accelerator speed up multiplier");
         parser.getOrDefString(COMMENT_GENERAL, ACCELERATORWATER, "Accelerator water per one substance convert");
 
+        parser.getOrDefString(COMMENT_GENERAL, BLACKLISTDIMIDS, "In what dim Id cow not spawn");
+        parser.getOrDefString(COMMENT_GENERAL, ENABLECONVERTCOWTODISPLAYER, "If true u can convert cow into displayer via halter");
+        parser.getOrDefString(COMMENT_GENERAL, BLACKLISTCOWTODISPLAYER, "TODO");
+        parser.getOrDefString(COMMENT_GENERAL, FEEDERBLACKLIST, "TODO");
+
         breedingItemWork = parser.getOrDefBoolean(GENERAL, BREEDING, false);
         projecteTickRemove = parser.getOrDefBoolean(GENERAL, PROJECTETICK, false);
         notenoughwandsTickRemove = parser.getOrDefBoolean(GENERAL, NOTENOWANDSTICK, false);
@@ -120,6 +137,13 @@ public class FCConfig {
         acceleratorPerCow = parser.getOrDefInt(GENERAL, ACCELERATORPERCOW, 1);
         acceleratorMultiplier = parser.getOrDefInt(GENERAL, ACCELERATORMULTIPLIER, 5);
         acceleratorWater = parser.getOrDefInt(GENERAL, ACCELERATORWATER, 10);
+
+        blackListDimIds = IntStream.of(parser.getOrDefIntArray(GENERAL, BLACKLISTDIMIDS, new int[0])).boxed().collect(Collectors.toSet());
+        enableConvertCowToDisplayer = parser.getOrDefBoolean(GENERAL, ENABLECONVERTCOWTODISPLAYER, true);
+        blackListCowToDisplayer = Arrays.stream(parser.getOrDefStringArray(GENERAL, BLACKLISTCOWTODISPLAYER, new String[0])).collect(Collectors.toSet());
+        feederBlackList = Arrays.stream(parser.getOrDefStringArray(GENERAL, FEEDERBLACKLIST, new String[0])).collect(Collectors.toSet());
+
+
 
         registry.clear();
         FLUIDS.clear();
