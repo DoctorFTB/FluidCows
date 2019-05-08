@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "fluidcows:sorter" },
+        "facing=south": { "model": "fluidcows:sorter", "y": 180 },
+        "facing=west":  { "model": "fluidcows:sorter", "y": 270 },
+        "facing=east":  { "model": "fluidcows:sorter", "y": 90 }
+    }
+}

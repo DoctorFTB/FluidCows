@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "fluidcows:feeder" },
+        "facing=south": { "model": "fluidcows:feeder", "y": 180 },
+        "facing=west":  { "model": "fluidcows:feeder", "y": 270 },
+        "facing=east":  { "model": "fluidcows:feeder", "y": 90 }
+    }
+}

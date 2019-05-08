@@ -2,10 +2,10 @@
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
 	"textures": {
-		"0": "fluidcows:vanilla/concrete_gray",
-		"1": "fluidcows:vanilla/hay_block_top",
-		"2": "fluidcows:vanilla/iron_bars",
-		"particle": "fluidcows:vanilla/concrete_gray"
+		"0": "fluidcows:blocks/vanilla/concrete_gray",
+		"1": "fluidcows:blocks/vanilla/hay_block_top",
+		"2": "fluidcows:blocks/vanilla/iron_bars",
+		"particle": "fluidcows:blocks/vanilla/concrete_gray"
 	},
 	"elements": [
 		{

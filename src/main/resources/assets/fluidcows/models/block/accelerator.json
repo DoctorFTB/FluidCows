@@ -2,12 +2,12 @@
 	"parent": "block/cube",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"1": "fluidcows:accelerator/accelerator_top_full",
-		"2": "fluidcows:accelerator/accelerator_side",
-		"3": "fluidcows:accelerator/accelerator_back",
-		"4": "fluidcows:accelerator/accelerator_bottom",
-		"5": "fluidcows:accelerator/accelerator_front_full",
-		"particle": "fluidcows:accelerator/accelerator_top_full"
+		"1": "fluidcows:blocks/accelerator/accelerator_top_full",
+		"2": "fluidcows:blocks/accelerator/accelerator_side",
+		"3": "fluidcows:blocks/accelerator/accelerator_back",
+		"4": "fluidcows:blocks/accelerator/accelerator_bottom",
+		"5": "fluidcows:blocks/accelerator/accelerator_front_full",
+		"particle": "fluidcows:blocks/accelerator/accelerator_top_full"
 	},
 	"elements": [
 		{

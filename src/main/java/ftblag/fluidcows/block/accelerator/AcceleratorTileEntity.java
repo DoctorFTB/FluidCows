@@ -110,7 +110,7 @@ public class AcceleratorTileEntity extends TileEntity implements IInventoryHelpe
 
         if (currentWheatSubstance > FCConfig.acceleratorPerCow) {
             List<EntityFluidCow> cows = getWorld().getEntitiesWithinAABB(EntityFluidCow.class, new AxisAlignedBB(getPos()).grow(FCConfig.acceleratorRadius));
-            if (!cows.isEmpty())
+            if (!cows.isEmpty()) {
                 for (EntityFluidCow cow : cows) {
                     if (cow.growTicks()) {
                         currentWheatSubstance -= FCConfig.acceleratorPerCow;
@@ -119,6 +119,7 @@ public class AcceleratorTileEntity extends TileEntity implements IInventoryHelpe
                             break;
                     }
                 }
+            }
         }
     }
 

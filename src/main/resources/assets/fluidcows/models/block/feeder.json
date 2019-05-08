@@ -1,0 +1,9 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "top": "fluidcows:blocks/feeder/top",
+		"front": "fluidcows:blocks/sorter/front",
+        "side": "fluidcows:blocks/feeder/side",
+		"down": "fluidcows:blocks/feeder/bottom"
+    }
+}

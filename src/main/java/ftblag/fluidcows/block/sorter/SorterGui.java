@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -95,6 +96,7 @@ public class SorterGui extends BaseGui {
 
         for (String fluid : te.filter) {
             if (left >= 45 && top >= 6 + i * 10 && left < 50 && top < 11 + i * 10) {
+
                 GlStateManager.disableLighting();
                 GlStateManager.disableDepth();
                 GlStateManager.colorMask(true, true, true, false);
@@ -102,16 +104,17 @@ public class SorterGui extends BaseGui {
                 GlStateManager.colorMask(true, true, true, true);
                 GlStateManager.enableLighting();
                 GlStateManager.enableDepth();
-                drawHoveringText("Remove " + fluid, mouseX, mouseY);
+
+                drawHoveringText(I18n.translateToLocalFormatted("gui.fluidcows.sorter.remove", fluid), mouseX, mouseY);
                 break;
             }
             i++;
         }
 
         if (left >= 7 && top >= 22 && left < 20 && top < 35) {
-            drawHoveringText(Arrays.asList("Click here with hovered", "item for add fluid"), mouseX, mouseY);
+            drawHoveringText(Arrays.asList(I18n.translateToLocal("gui.fluidcows.sorter.insert").split(" NEXT ")), mouseX, mouseY);
         } else if (left >= 159 && top >= 20 && left < 169 && top < 30) {
-            drawHoveringText("Change to " + (te.isBlackList ? "white" : "black") + "list", mouseX, mouseY);
+            drawHoveringText(I18n.translateToLocalFormatted("gui.fluidcows.sorter.list", te.isBlackList ? "white" : "black"), mouseX, mouseY);
         }
     }
 }
