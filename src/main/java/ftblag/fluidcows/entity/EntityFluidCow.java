@@ -266,7 +266,7 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
         } else {
             buffer.writeBoolean(false);
         }
-        ByteBufUtils.writeVarInt(buffer, getCD(), 4);
+        ByteBufUtils.writeVarInt(buffer, getCD(), 5);
     }
 
     @Override
@@ -274,7 +274,7 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
         boolean tmp = buffer.readBoolean();
         if (tmp)
             fluid = FluidRegistry.getFluid(ByteBufUtils.readUTF8String(buffer));
-        updateCD(ByteBufUtils.readVarInt(buffer, 4));
+        updateCD(ByteBufUtils.readVarInt(buffer, 5));
     }
 
     @Override
