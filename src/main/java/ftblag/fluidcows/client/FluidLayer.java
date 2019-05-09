@@ -33,7 +33,7 @@ public class FluidLayer implements LayerRenderer<EntityFluidCow> {
             return;
         }
 
-        TextureAtlasSprite icon = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getStill().toString());
+        TextureAtlasSprite icon = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluid.getStill().toString());
 
         pushMatrix();
 
