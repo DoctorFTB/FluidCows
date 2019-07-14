@@ -1,7 +1,6 @@
 package ftblag.fluidcows.client;
 
 import ftblag.fluidcows.entity.EntityFluidCow;
-import ftblag.fluidcows.util.FCUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -11,8 +10,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
-
-import java.awt.Color;
 
 import static net.minecraft.client.renderer.GlStateManager.*;
 
