@@ -22,11 +22,6 @@ public class JsonConfig {
         this.file = file;
     }
 
-    private void classAuthor() {
-        System.out.println("@author class GenDeathrow with changes by FTB_lag");
-        System.out.println("But in this moment mod without sources");
-    }
-
     public void load() {
         try {
             if (!file.exists()) {
