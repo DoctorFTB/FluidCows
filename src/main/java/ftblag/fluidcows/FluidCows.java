@@ -107,9 +107,9 @@ public class FluidCows {
         GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "halter"), null, new ItemStack(halter), "  L", " S ", "S  ", 'L', Items.LEATHER, 'S', Items.STICK);
         GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "accelerator"), null, new ItemStack(accelerator), "IHI", "RHL", "III", 'I', Items.IRON_INGOT, 'H', Blocks.HAY_BLOCK, 'R', Blocks.REDSTONE_BLOCK, 'L', Items.LEATHER);
         
-        GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "feeder"), null, new ItemStack(accelerator), "GIG", "ILI", "GIG", 'G', new ItemStack(Blocks.CONCRETE, 1, 6), 'L', Items.LEATHER, 'I', Items.IRON_INGOT);
-        GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "sorter"), null, new ItemStack(accelerator), "GIG", "ILI", "GWG", 'G', new ItemStack(Blocks.CONCRETE, 1, 6), 'L', Items.LEATHER, 'I', Items.IRON_INGOT, 'W', Items.WHEAT);
-        GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "ranger"), null, new ItemStack(accelerator), "W W", "HHH", 'W', new ItemStack(Blocks.WOOL), 'H', Items.WHEAT);
+        GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "feeder"), null, new ItemStack(feeder), "GIG", "ILI", "GIG", 'G', new ItemStack(Blocks.CONCRETE, 1, 6), 'L', Items.LEATHER, 'I', Items.IRON_INGOT);
+        GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "sorter"), null, new ItemStack(sorter), "GIG", "ILI", "GWG", 'G', new ItemStack(Blocks.CONCRETE, 1, 6), 'L', Items.LEATHER, 'I', Items.IRON_INGOT, 'W', Items.WHEAT);
+        GameRegistry.addShapedRecipe(new ResourceLocation(MODID, "ranger"), null, new ItemStack(ranger), "W W", "HHH", 'W', new ItemStack(Blocks.WOOL), 'H', Items.WHEAT);
 
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             preInit();
