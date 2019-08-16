@@ -4,6 +4,7 @@ import ftblag.fluidcows.FluidCows;
 import ftblag.fluidcows.entity.ai.FluidCowAIMate;
 import ftblag.fluidcows.gson.FCConfig;
 import ftblag.fluidcows.item.ItemCowDisplayer;
+import ftblag.fluidcows.item.ItemCowHalter;
 import ftblag.fluidcows.util.FCUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EntityAgeable;
@@ -196,15 +197,20 @@ public class EntityFluidCow extends EntityCowCopy implements IEntityAdditionalSp
                     EntityPlayer pl = (EntityPlayer) sour.getTrueSource();
                     if (!(pl instanceof FakePlayer)) {
                         ItemStack hand = pl.getHeldItemMainhand();
-                        if (!hand.isEmpty() && hand.getItem() == Items.STICK) {
-                            if (fluid.canBePlacedInWorld()) {
-                                if (getEntityWorld().isAirBlock(getPosition()) && !getEntityWorld().isRemote) {
-                                    getEntityWorld().setBlockState(getPosition(), fluid.getBlock().getDefaultState());
+                        if (!hand.isEmpty()) {
+                            if (hand.getItem() == Items.STICK) {
+                                if (fluid.canBePlacedInWorld()) {
+                                    if (getEntityWorld().isAirBlock(getPosition()) && !getEntityWorld().isRemote) {
+                                        getEntityWorld().setBlockState(getPosition(), fluid.getBlock().getDefaultState());
+                                    }
+                                    updateCD(FCConfig.getWorldCD(fluid.getName()));
+                                    syncCD();
+                                } else {
+                                    pl.sendMessage(new TextComponentString("This fluid not supported!"));
                                 }
-                                updateCD(FCConfig.getWorldCD(fluid.getName()));
-                                syncCD();
-                            } else {
-                                pl.sendMessage(new TextComponentString("This fluid not supported!"));
+                            } else if (hand.getItem() == FluidCows.halter) {
+                                hand.getItem().hitEntity(hand, this, pl);
+                                return false;
                             }
                         }
                     }
