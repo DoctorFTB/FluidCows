@@ -46,7 +46,11 @@ public class FCConfig {
             BLACKLISTDIMIDS = "BlackListDimIds",
             ENABLECONVERTCOWTODISPLAYER = "EnableConvertCowToDisplayer",
             BLACKLISTCOWTODISPLAYER = "BlackListCowToDisplayer",
-            FEEDERBLACKLIST = "FeederBlackList";
+            FEEDERBLACKLIST = "FeederBlackList",
+            EIOBLACKLISTSPAWNING = "EIOBlackListSpawning",
+            EIOBLACKLISTSOULVIAL = "EIOBlackListSoulVial",
+            EIONEEDSCLONING = "EIONeedsCloning",
+            EIOENTITYCOSTMULTIPLIER = "EIOEntityCostMultiplier";
     private static final FluidInfo def = new FluidInfo(0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, 0, Integer.MAX_VALUE, Integer.MIN_VALUE);
 
     private static JsonConfig parser;
@@ -68,6 +72,9 @@ public class FCConfig {
     public static boolean enableConvertCowToDisplayer;
     public static Set<String> blackListCowToDisplayer;
     public static Set<String> feederBlackList;
+
+    public static boolean EIOBlackListSpawning, EIOBlackListSoulVial, EIONeedsCloning;
+    public static int EIOEntityCostMultiplier;
 
     private static HashMap<String, FluidInfo> registry = new HashMap<>();
 
@@ -117,8 +124,13 @@ public class FCConfig {
 
         parser.getOrDefString(COMMENT_GENERAL, BLACKLISTDIMIDS, "In what dim Id cow not spawn");
         parser.getOrDefString(COMMENT_GENERAL, ENABLECONVERTCOWTODISPLAYER, "If true u can convert cow into displayer via halter");
-        parser.getOrDefString(COMMENT_GENERAL, BLACKLISTCOWTODISPLAYER, "TODO");
-        parser.getOrDefString(COMMENT_GENERAL, FEEDERBLACKLIST, "TODO");
+        parser.getOrDefString(COMMENT_GENERAL, BLACKLISTCOWTODISPLAYER, "Black list for 'cow to displayer' convert");
+        parser.getOrDefString(COMMENT_GENERAL, FEEDERBLACKLIST, "Black list for 'what cows cant feed with Feeder'");
+
+        parser.getOrDefString(COMMENT_GENERAL, EIOBLACKLISTSPAWNING, "EIO Powered Spawner cant spawn any cow");
+        parser.getOrDefString(COMMENT_GENERAL, EIOBLACKLISTSOULVIAL, "EIO Soul Vial cant store any cow");
+        parser.getOrDefString(COMMENT_GENERAL, EIONEEDSCLONING, "EIO Powered Spawner cloning cow every time (prevents spawn random cows from spawner)");
+        parser.getOrDefString(COMMENT_GENERAL, EIOENTITYCOSTMULTIPLIER, "EIO Powered Spawner need multiplier energy cost to spawn cow");
 
         breedingItemWork = parser.getOrDefBoolean(GENERAL, BREEDING, false);
         projecteTickRemove = parser.getOrDefBoolean(GENERAL, PROJECTETICK, false);
@@ -142,6 +154,12 @@ public class FCConfig {
         enableConvertCowToDisplayer = parser.getOrDefBoolean(GENERAL, ENABLECONVERTCOWTODISPLAYER, true);
         blackListCowToDisplayer = Arrays.stream(parser.getOrDefStringArray(GENERAL, BLACKLISTCOWTODISPLAYER, new String[0])).collect(Collectors.toSet());
         feederBlackList = Arrays.stream(parser.getOrDefStringArray(GENERAL, FEEDERBLACKLIST, new String[0])).collect(Collectors.toSet());
+
+
+        EIOBlackListSpawning = parser.getOrDefBoolean(GENERAL, EIOBLACKLISTSPAWNING, false);
+        EIOBlackListSoulVial = parser.getOrDefBoolean(GENERAL, EIOBLACKLISTSOULVIAL, false);
+        EIONeedsCloning = parser.getOrDefBoolean(GENERAL, EIONEEDSCLONING, true);
+        EIOEntityCostMultiplier = parser.getOrDefInt(GENERAL, EIOENTITYCOSTMULTIPLIER, 0);
 
 
 

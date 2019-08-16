@@ -11,6 +11,7 @@ import ftblag.fluidcows.client.RenderFluidCow;
 import ftblag.fluidcows.client.RenderStallTile;
 import ftblag.fluidcows.entity.EntityFluidCow;
 import ftblag.fluidcows.gson.FCConfig;
+import ftblag.fluidcows.integration.EIOIntegration;
 import ftblag.fluidcows.integration.HwylaIntegration;
 import ftblag.fluidcows.integration.MekanismIntegration;
 import ftblag.fluidcows.integration.NotEnoughWandsIntegration;
@@ -162,6 +163,9 @@ public class FluidCows {
         }
         if (Loader.isModLoaded("randomthings") && FCConfig.randomthingsTickRemove) {
             RandomThingsIntegration.reg();
+        }
+        if (Loader.isModLoaded("enderio")) {
+            EIOIntegration.reg();
         }
     }
 
