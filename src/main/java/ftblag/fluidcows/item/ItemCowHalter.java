@@ -42,6 +42,9 @@ public class ItemCowHalter extends BaseItem {
             return false;
         if (((EntityFluidCow) entity).getGrowingAge() < 0)
             return false;
+        if (entity.isDead) {
+            return false;
+        }
         ItemStack halter = new ItemStack(this);
         NBTTagCompound tag = new NBTTagCompound();
         ((EntityFluidCow) entity).writeEntityToHalter(tag);
@@ -92,6 +95,7 @@ public class ItemCowHalter extends BaseItem {
                         ItemStack displayer = ItemCowDisplayer.applyFluidToItemStack(new ItemStack(FluidCows.displayer), cow.fluid);
                         if (((EntityPlayer) player).inventory.addItemStackToInventory(displayer)) {
                             cow.setDead();
+                            return true;
                         }
                     } else {
                         player.sendMessage(new TextComponentString("You cant convert fluid from cow."));
