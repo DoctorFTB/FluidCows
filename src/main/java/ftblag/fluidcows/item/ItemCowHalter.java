@@ -91,7 +91,9 @@ public class ItemCowHalter extends BaseItem {
             if (target instanceof EntityFluidCow) {
                 if (FCConfig.enableConvertCowToDisplayer) {
                     EntityFluidCow cow = (EntityFluidCow) target;
-                    if (!FCConfig.blackListCowToDisplayer.contains(cow.fluid.getName())) {
+                    if (cow.getGrowingAge() < 0) {
+                        player.sendMessage(new TextComponentString("You cant convert child cow."));
+                    } else if (!FCConfig.blackListCowToDisplayer.contains(cow.fluid.getName())) {
                         ItemStack displayer = ItemCowDisplayer.applyFluidToItemStack(new ItemStack(FluidCows.displayer), cow.fluid);
                         if (((EntityPlayer) player).inventory.addItemStackToInventory(displayer)) {
                             cow.setDead();
